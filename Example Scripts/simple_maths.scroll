@@ -10,3 +10,7 @@ rune c = 2.5 % 3
 
 rune d = -c
 
+chant "a = " + a + "\n"
+chant "b = " + b + "\n"
+chant "c = " + c + "\n"
+chant "d = " + d + "\n"

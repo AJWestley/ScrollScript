@@ -1,7 +1,0 @@
-rune a = 10
-
-rune b = a + 2
-
-chant a
-
-chant b

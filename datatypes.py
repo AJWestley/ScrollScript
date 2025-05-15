@@ -74,7 +74,10 @@ class ScrollInt(ScrollValue):
         self.value = int(value)
         
     def __add__(self, other):
-        return ScrollInt(self.value + wrap_primitive(other).value)
+        other_val = wrap_primitive(other).value
+        if isinstance(other_val, str):
+            return ScrollString(str(self.value) + other_val)
+        return ScrollInt(self.value + other_val)
 
     def __sub__(self, other):
         return ScrollInt(self.value - wrap_primitive(other).value)

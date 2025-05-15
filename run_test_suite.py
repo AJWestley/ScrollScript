@@ -1,5 +1,7 @@
 from sys import argv
 import contextlib
+import sys
+import os
 import io
 import glob
 from interpreter import ScrollScriptInterpreter
@@ -11,36 +13,67 @@ GRAMMAR_PATH = "ScrollScript.gmr"
 def main():
     if len(argv) < 2:
         print("No directory provided.")
+        return
     
     path = argv[1]
-    
-    print(bcolors.OKBLUE + "\nRunning Test Suite\n" + bcolors.ENDC)
+    test_files = sorted(glob.glob(f"{path}/*.scroll"))
+    max_len = max(len(f.split("\\")[-1].split(".")[0]) for f in test_files)
+
+    print(bcolors.OKBLUE + "\n#--- Running Test Suite ---#\n" + bcolors.ENDC)
     
     passed = 0
     failed = 0
     
-    file_paths = glob.glob(f"{path}/*.scroll")
-    max_len = max(len(fpath) for fpath in file_paths)
-    
-    for fpath in file_paths:
-        print(f"{fpath.ljust(max_len)}", end='\t')
+    for fpath in test_files:
+        fname = fpath.split("\\")[-1].split(".")[0]
+        print(fname.ljust(max_len), end="\t")
         try:
-            run_file(fpath)
-            print(bcolors.OKGREEN + "Passed" + bcolors.ENDC)
-            passed += 1
-        except:
-            print(bcolors.FAIL + "Failed" + bcolors.ENDC)
-            failed += 1
+            if run_file(fpath):
+                print(bcolors.OKGREEN + "Passed" + bcolors.ENDC)
+                passed += 1
+            else:
+                print(bcolors.FAIL + "Failed" + bcolors.ENDC)
+                failed += 1
+        except Exception as e:
+            print(bcolors.FAIL + f"Failed (error: {e})" + bcolors.ENDC)
     
-    print(bcolors.HEADER + f"\nSummary: {passed} passed, {failed} failed" + bcolors.ENDC)
+    print(f"\n{bcolors.HEADER}Summary:")
+    print(f"{bcolors.OKCYAN}Total: {passed+failed}")
+    print(f"{bcolors.OKGREEN}Passed: {passed}")
+    print(f"{bcolors.FAIL}Failed: {failed}{bcolors.ENDC}")
 
 def run_file(program_path):
     parser = ScrollScriptParser(GRAMMAR_PATH)
+    interpreter = ScrollScriptInterpreter()
 
-    # Redirect stdout and stderr to suppress output
-    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+    # Capture printed output
+    captured_output = io.StringIO()
+    sys_stdout = sys.stdout
+    sys.stderr = io.StringIO()  # optional: capture stderr too
+    sys.stdout = captured_output
+
+    expected_output_path = os.path.join(
+        os.path.dirname(program_path),
+        "output",
+        os.path.basename(program_path).replace(".scroll", ".o")
+    )
+
+    try:
         parse_tree = parser.parse(program_path)
-        interpret = ScrollScriptInterpreter()
-        interpret.transform(parse_tree)
+        interpreter.transform(parse_tree)
+        sys.stdout = sys_stdout
+        actual_output = captured_output.getvalue().strip()
+
+        with open(expected_output_path) as f:
+            expected_output = f.read().strip()
+
+        return actual_output == expected_output
+
+    except Exception as e:
+        sys.stdout = sys_stdout
+        exception_name = type(e).__name__
+        with open(expected_output_path) as f:
+            expected_output = f.read().strip()
+        return exception_name in expected_output or str(e).strip() == expected_output.strip()
 
 if __name__ == '__main__': main()

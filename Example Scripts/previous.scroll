@@ -2,4 +2,6 @@ rune mynum = 4
 
 mynum = 10
 
-chant mynum from days of yore
+chant mynum + "\n"
+
+chant mynum from days of yore + "\n"
