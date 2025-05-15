@@ -15,8 +15,10 @@ FROM.2: "from"
 DAYS.2: "days"
 OF.2: "of"
 YORE.2: "yore"
-TRUE.2: "True"
-FALSE.2: "False"
+TRUE.2: "Truthsung"
+FALSE.2: "Falsehood"
+AS.2: "->"
+CAST.2: "transmute"
 
 
 # ----- Assignments & Declarations -----
@@ -29,6 +31,7 @@ assignment: var_name "=" expression
 # ----- Expressions -----
 
 ?expression: input_statement
+        | value_cast
         | term
         | "-" term                      -> un_expr_negate
         | expression ADD_OP term        -> bin_expr_add
@@ -63,6 +66,10 @@ BOOLEAN.2: TRUE | FALSE
 
 DIGIT.2: "0".."9"
 
+?atom: var_expr
+     | number
+     | STRING
+     | "(" expression ")"
 
 # ----- Operators -----
 
@@ -76,6 +83,8 @@ OR: "|"
 
 NOT: "!"
 
+value_cast: CAST atom AS PRIMITIVE
+
 # ----- Variables -----
 
 var_name: VARIABLE
@@ -84,6 +93,8 @@ var_expr: VARIABLE prev         -> previous
         | VARIABLE
 
 VARIABLE.1: /[a-zA-Z_][a-zA-Z0-9_]*/
+
+PRIMITIVE.2: "int" | "float" | "string" | "bool"
 
 
 # ----- Input & Output -----

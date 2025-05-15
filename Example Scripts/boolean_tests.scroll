@@ -1,16 +1,16 @@
-rune a = True
-rune b = False
-rune c = True
+rune a = Truthsung
+rune b = Falsehood
+rune c = Truthsung
 
 chant a & b + "\n"
 chant a & a + "\n"
 chant b & a + "\n"
 chant b & b + "\n\n"
 
-chant a | False + "\n"
-chant True | True + "\n"
-chant False | False + "\n"
-chant False | True + "\n\n"
+chant a | Falsehood + "\n"
+chant Truthsung | Truthsung + "\n"
+chant Falsehood | Falsehood + "\n"
+chant Falsehood | Truthsung + "\n\n"
 
 chant !a + " " + !!b + "\n\n"
 

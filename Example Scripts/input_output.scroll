@@ -1,5 +1,0 @@
-chant "Input your name: "
-
-rune a = channel 1 + 1
-
-chant "hello " + a
