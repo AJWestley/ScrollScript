@@ -1,14 +1,18 @@
 from sys import argv
-import contextlib
 import sys
 import os
 import io
 import glob
 from interpreter import ScrollScriptInterpreter
 from parser import ScrollScriptParser
-from utils import bcolors
 
 GRAMMAR_PATH = "ScrollScript.gmr"
+
+HEADER = '\033[95m'
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
 
 def main():
     if len(argv) < 2:
@@ -19,7 +23,7 @@ def main():
     test_files = sorted(glob.glob(f"{path}/*.scroll"))
     max_len = max(len(f.split("\\")[-1].split(".")[0]) for f in test_files)
 
-    print(bcolors.OKBLUE + "\n#--- Running Test Suite ---#\n" + bcolors.ENDC)
+    print(OKBLUE + "\n#--- Running Test Suite ---#\n" + ENDC)
     
     passed = 0
     failed = 0
@@ -29,18 +33,18 @@ def main():
         print(fname.ljust(max_len), end="\t")
         try:
             if run_file(fpath):
-                print(bcolors.OKGREEN + "Passed" + bcolors.ENDC)
+                print(OKGREEN + "Passed" + ENDC)
                 passed += 1
             else:
-                print(bcolors.FAIL + "Failed" + bcolors.ENDC)
+                print(FAIL + "Failed" + ENDC)
                 failed += 1
         except Exception as e:
-            print(bcolors.FAIL + f"Failed (error: {e})" + bcolors.ENDC)
+            print(FAIL + f"Failed (error: {e})" + ENDC)
     
-    print(f"\n{bcolors.HEADER}Summary:")
-    print(f"{bcolors.OKCYAN}Total: {passed+failed}")
-    print(f"{bcolors.OKGREEN}Passed: {passed}")
-    print(f"{bcolors.FAIL}Failed: {failed}{bcolors.ENDC}")
+    print(f"\n{HEADER}Summary:")
+    print(f"{OKCYAN}Total: {passed+failed}")
+    print(f"{OKGREEN}Passed: {passed}")
+    print(f"{FAIL}Failed: {failed}{ENDC}")
 
 def run_file(program_path):
     parser = ScrollScriptParser(GRAMMAR_PATH)
