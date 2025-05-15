@@ -1,0 +1,22 @@
+rune a = True
+rune b = False
+rune c = True
+
+chant a & b + "\n"
+chant a & a + "\n"
+chant b & a + "\n"
+chant b & b + "\n\n"
+
+chant a | False + "\n"
+chant True | True + "\n"
+chant False | False + "\n"
+chant False | True + "\n\n"
+
+chant !a + " " + !!b + "\n\n"
+
+~~ test the full shebang
+
+chant a | b & c + "\n"
+chant (a | b) & c + "\n"
+chant a & b | c + "\n"
+chant a & (b | c) + "\n"

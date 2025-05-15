@@ -79,11 +79,22 @@ class ScrollScriptInterpreter(Transformer):
         
         return left ** right
     
+    def bin_expr_or(self, items):
+        left, _, right = items
+        return left or right
+    
+    def bin_expr_and(self, items):
+        left, _, right = items
+        return left and right
+    
     def group_expr(self, items):
         return items[0]
 
     def un_expr_negate(self, items):
         return -items[0]
+    
+    def un_expr_not(self, items):
+        return not items[1]
     
     # ----- Variables ------
 
@@ -115,8 +126,18 @@ class ScrollScriptInterpreter(Transformer):
     def FLOAT(self, token):
         return float(token)
     
+    def BOOLEAN(self, token):
+        text = str(token)
+        
+        if text == 'True':
+            return True
+        elif text == 'False':
+            return False
+        
+        raise Exception(f'A rune of bool may not be {text}.')
+    
     def STRING(self, token):
-        raw = str(token)[1:-1]  # Remove the surrounding quotes
+        raw = str(token)[1:-1]
 
         unescaped = bytes(raw, "utf-8").decode("unicode_escape")
         return unescaped

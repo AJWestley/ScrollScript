@@ -5,75 +5,88 @@
         | assignment
 
 
-# ----- Keywords ------
+# ----- Keywords -----
 
-LET: "rune"
-PRINT: "chant"
-INPUT: "channel"
-prev: FROM DAYS OF YORE
-FROM: "from"
-DAYS: "days"
-OF: "of"
-YORE: "yore"
+LET.2: "rune"
+PRINT.2: "chant"
+INPUT.2: "channel"
+prev.2: FROM DAYS OF YORE
+FROM.2: "from"
+DAYS.2: "days"
+OF.2: "of"
+YORE.2: "yore"
+TRUE.2: "True"
+FALSE.2: "False"
 
 
-# ----- Assignments & Declarations ------
+# ----- Assignments & Declarations -----
 
 declaration: LET var_name ["=" expression]
 
 assignment: var_name "=" expression
 
 
-# ----- Expressions ------
+# ----- Expressions -----
 
 ?expression: input_statement
-        | STRING
         | term
-        | "-" term  -> un_expr_negate
-        | expression ADD_OP term   -> bin_expr_add
+        | "-" term                      -> un_expr_negate
+        | expression ADD_OP term        -> bin_expr_add
+        | expression OR term            -> bin_expr_or
 
 ?term: factor
-        | term MUL_OP factor   -> bin_expr_mul
+        | term MUL_OP factor    -> bin_expr_mul
+        | term AND factor       -> bin_expr_and
 
 ?factor: power
+        | NOT factor                    -> un_expr_not
         | factor "^" power              -> bin_expr_pow
         | "(" expression ")"            -> group_expr
 
-?power: var_expr
+?power: BOOLEAN
+        | STRING
+        | var_expr
         | number
 
 ?number: INTEGER | FLOAT
 
 
-# ----- Data Types ------
+# ----- Data Types -----
 
-INTEGER: ["-"] DIGIT+
+INTEGER.2: ["-"] DIGIT+
 
-FLOAT: ["-"] DIGIT+ "." DIGIT+
+FLOAT.2: ["-"] DIGIT+ "." DIGIT+
 
-STRING: "\"" /[^\"]*/ "\""
+STRING.2: "\"" /[^\"]*/ "\""
 
-DIGIT: "0".."9"
+BOOLEAN.2: TRUE | FALSE
+
+DIGIT.2: "0".."9"
 
 
-# ----- Operators ------
+# ----- Operators -----
 
 ADD_OP: "+" | "-"
 
 MUL_OP: "*" | "/" | "%"
 
+AND: "&"
 
-# ----- Variables ------
+OR: "|"
+
+NOT: "!"
+
+# ----- Variables -----
 
 var_name: VARIABLE
 
 var_expr: VARIABLE prev         -> previous
         | VARIABLE
 
-VARIABLE: /[a-zA-Z_][a-zA-Z0-9_]*/
+VARIABLE.1: /[a-zA-Z_][a-zA-Z0-9_]*/
 
 
-# ----- Input & Output ------
+# ----- Input & Output -----
 
 print_statement: PRINT expression
 
@@ -81,9 +94,13 @@ input_statement: INPUT
                 | INPUT expression    -> prompted_input
 
 
-# ----- Features ------
+# ----- Features -----
 
 
+# ----- Comments -----
+
+COMMENT: /~~[^\n]*/
+%ignore COMMENT
 
 %import common.WS
 %ignore WS
