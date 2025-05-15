@@ -1,8 +1,9 @@
 import codecs
 from lark import Transformer
 import keywords
-from utils import is_constant
+from utils import is_keyword
 from datatypes import wrap_primitive, ScrollBool, ScrollFloat, ScrollInt, ScrollString
+from exceptions import *
 
 class ScrollScriptInterpreter(Transformer):
     def __init__(self):
@@ -15,7 +16,7 @@ class ScrollScriptInterpreter(Transformer):
         variable = items[1]
 
         if variable in self.variables:
-            raise Exception(f"The rune of '{variable}' is already written.")
+            raise RuneAlreadyWrittenError(variable)
 
         if len(items) > 2 and items[2] is not None:
             value = wrap_primitive(items[2])
@@ -37,7 +38,7 @@ class ScrollScriptInterpreter(Transformer):
         variable = items[2]
 
         if variable in self.variables:
-            raise Exception(f"The rune of '{variable}' is already written.")
+            raise RuneAlreadyWrittenError(variable)
 
         if len(items) > 3 and items[3] is not None:
             value = wrap_primitive(items[3])
@@ -59,10 +60,10 @@ class ScrollScriptInterpreter(Transformer):
         variable, value = items
         
         if variable not in self.variables:
-            raise Exception(f"The rune of '{variable}' has not yet been written.")
+            raise RuneNotWrittenError(variable)
         
         if self.variables[variable]['const']:
-            raise Exception(f"The rune of '{variable}' is sealed.")
+            raise SealedRuneError(variable)
         
         value = wrap_primitive(value)
         var_type = type(value).type_name
@@ -77,7 +78,7 @@ class ScrollScriptInterpreter(Transformer):
         variable = items[1]
 
         if variable not in self.variables:
-            Exception(f"You cannot {keywords.DELETE} runes that do not exist.")
+            DispelError(f"Rune {variable} does not exist.")
         
         self.variables.pop(variable)
     
@@ -95,7 +96,7 @@ class ScrollScriptInterpreter(Transformer):
         if op == "-":
             return left - right
         
-        raise Exception(f"Unknown spell:'{op}'")
+        raise UnknownSpellError(op)
     
     def bin_expr_mul(self, items):
         left, op, right = items
@@ -110,7 +111,7 @@ class ScrollScriptInterpreter(Transformer):
         if op == "%":
             return left % right
         
-        raise Exception(f"Unknown spell:'{op}'")
+        raise UnknownSpellError(op)
     
     def bin_expr_pow(self, items):
         left, right = wrap_primitive(items[0]), wrap_primitive(items[1])
@@ -141,9 +142,9 @@ class ScrollScriptInterpreter(Transformer):
     def var_expr(self, items):
         name = str(items[0])
         if name not in self.variables:
-            raise Exception(f"The rune of '{name}' has not yet been written.")
-        elif self.variables[name] is None:
-            raise Exception(f"The rune of '{name}' is written, but dormant.")
+            raise RuneNotWrittenError(name)
+        elif self.variables[name]['value'] is None:
+            raise DormantRuneError(name)
         return self.variables[name]['value']
     
     def var_name(self, items):
@@ -152,8 +153,8 @@ class ScrollScriptInterpreter(Transformer):
     def VARIABLE(self, token):
         name = str(token)
         
-        if is_constant(name):
-            raise Exception(f"{name} is a rooted in the arcane, and should not be used lightly.")
+        if is_keyword(name):
+            raise FundamentalRuneError(name)
     
         return name
     
@@ -164,8 +165,8 @@ class ScrollScriptInterpreter(Transformer):
 
         try:
             return value.cast_to(target_type)
-        except Exception as e:
-            raise Exception(f"Transmutation failed: {e}")
+        except Exception:
+            raise TransmutationError(value.type_name, target_type)
     
     # ----- Data Types ------
     
@@ -208,7 +209,7 @@ class ScrollScriptInterpreter(Transformer):
     def previous(self, items):
         name = str(items[0])
         if name not in self.variables:
-            raise Exception(f"The rune of '{name}' has not yet been written.")
+            raise RuneNotWrittenError(name)
         elif self.variables[name] is None:
-            raise Exception(f"The rune of '{name}' is written, but dormant.")
+            raise DormantRuneError(name)
         return self.variables[name]['previous']

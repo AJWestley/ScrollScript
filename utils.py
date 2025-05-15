@@ -1,6 +1,6 @@
 from keywords import KEYWORDS_LIST
 
-def is_constant(name):
+def is_keyword(name):
     """
     Checks if a name is a language constant.
 
