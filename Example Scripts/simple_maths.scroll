@@ -1,0 +1,12 @@
+rune a
+
+a = 2.5
+
+rune b = a - 4
+
+a = 1 + 3 * 4
+
+rune c = 2.5 % 3
+
+rune d = -c
+

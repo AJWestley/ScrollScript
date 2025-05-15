@@ -1,0 +1,89 @@
+?start: instruction+
+
+?instruction: print_statement
+        | declaration
+        | assignment
+
+
+# ----- Keywords ------
+
+LET: "rune"
+PRINT: "chant"
+INPUT: "channel"
+prev: FROM DAYS OF YORE
+FROM: "from"
+DAYS: "days"
+OF: "of"
+YORE: "yore"
+
+
+# ----- Assignments & Declarations ------
+
+declaration: LET var_name ["=" expression]
+
+assignment: var_name "=" expression
+
+
+# ----- Expressions ------
+
+?expression: input_statement
+        | STRING
+        | term
+        | "-" term  -> un_expr_negate
+        | expression ADD_OP term   -> bin_expr_add
+
+?term: factor
+        | term MUL_OP factor   -> bin_expr_mul
+
+?factor: power
+        | factor "^" power              -> bin_expr_pow
+        | "(" expression ")"            -> group_expr
+
+?power: var_expr
+        | number
+
+?number: INTEGER | FLOAT
+
+
+# ----- Data Types ------
+
+INTEGER: ["-"] DIGIT+
+
+FLOAT: ["-"] DIGIT+ "." DIGIT+
+
+STRING: "\"" /[^\"]*/ "\""
+
+DIGIT: "0".."9"
+
+
+# ----- Operators ------
+
+ADD_OP: "+" | "-"
+
+MUL_OP: "*" | "/" | "%"
+
+
+# ----- Variables ------
+
+var_name: VARIABLE
+
+var_expr: VARIABLE prev         -> previous
+        | VARIABLE
+
+VARIABLE: /[a-zA-Z_][a-zA-Z0-9_]*/
+
+
+# ----- Input & Output ------
+
+print_statement: PRINT expression
+
+input_statement: INPUT
+                | INPUT expression    -> prompted_input
+
+
+# ----- Features ------
+
+
+
+%import common.WS
+%ignore WS

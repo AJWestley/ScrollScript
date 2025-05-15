@@ -1,0 +1,7 @@
+rune a = 10
+
+rune b = a + 2
+
+print a
+
+print b

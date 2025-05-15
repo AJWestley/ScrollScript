@@ -1,0 +1,5 @@
+rune mynum = 4
+
+mynum = 10
+
+chant mynum from days of yore

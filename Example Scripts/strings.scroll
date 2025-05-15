@@ -1,0 +1,6 @@
+rune a = "hi there" 
+rune b = " human"
+
+rune c = a + b
+
+c = c + "wow"
