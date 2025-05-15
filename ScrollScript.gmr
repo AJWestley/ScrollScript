@@ -1,8 +1,10 @@
 ?start: instruction+
 
 ?instruction: print_statement
-        | declaration
+        | var_declaration
+        | const_declaration
         | assignment
+        | deletion
 
 
 # ----- Keywords -----
@@ -19,13 +21,19 @@ TRUE.2: "Truthsung"
 FALSE.2: "Falsehood"
 AS.2: "->"
 CAST.2: "transmute"
+DELETE.2: "dispel"
+DECL_CONST.2: "sealed"
 
 
 # ----- Assignments & Declarations -----
 
-declaration: LET var_name ["=" expression]
+var_declaration: LET var_name ["=" expression]
+
+const_declaration: DECL_CONST LET var_name ["=" expression]
 
 assignment: var_name "=" expression
+
+deletion: DELETE var_name
 
 
 # ----- Expressions -----

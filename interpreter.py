@@ -11,7 +11,7 @@ class ScrollScriptInterpreter(Transformer):
     
     # ----- Assignments & Declarations ------
     
-    def declaration(self, items):
+    def var_declaration(self, items):
         variable = items[1]
 
         if variable in self.variables:
@@ -27,6 +27,29 @@ class ScrollScriptInterpreter(Transformer):
         self.variables[variable] = {
             "value": value,
             "type": var_type,
+            "const": False,
+            "previous": None
+        }
+
+        return (variable, value)
+
+    def const_declaration(self, items):
+        variable = items[2]
+
+        if variable in self.variables:
+            raise Exception(f"The rune of '{variable}' is already written.")
+
+        if len(items) > 3 and items[3] is not None:
+            value = wrap_primitive(items[3])
+            var_type = type(value).type_name
+        else:
+            value = None
+            var_type = None
+
+        self.variables[variable] = {
+            "value": value,
+            "type": var_type,
+            "const": True,
             "previous": None
         }
 
@@ -38,18 +61,25 @@ class ScrollScriptInterpreter(Transformer):
         if variable not in self.variables:
             raise Exception(f"The rune of '{variable}' has not yet been written.")
         
+        if self.variables[variable]['const']:
+            raise Exception(f"The rune of '{variable}' is sealed.")
+        
         value = wrap_primitive(value)
         var_type = type(value).type_name
         
-        prev_value = self.variables[variable]['value']
-        
-        self.variables[variable] = {
-            "value": value,
-            "type": var_type,
-            "previous": prev_value
-        }
+        self.variables[variable]['previous'] = self.variables[variable]['value']
+        self.variables[variable]['value'] = value 
+        self.variables[variable]['type'] = var_type
+
         return (variable, value)
     
+    def deletion(self, items):
+        variable = items[1]
+
+        if variable not in self.variables:
+            Exception(f"You cannot {keywords.DELETE} runes that do not exist.")
+        
+        self.variables.pop(variable)
     
     # ----- Expressions ------
     
@@ -128,7 +158,6 @@ class ScrollScriptInterpreter(Transformer):
         return name
     
     def value_cast(self, items):
-        print(f"value_cast items: {items!r}")
         value = wrap_primitive(items[1])
         
         target_type = str(items[3])
