@@ -66,11 +66,12 @@ class ScrollScriptInterpreter(Transformer):
             raise SealedRuneError(variable)
         
         value = wrap_primitive(value)
-        var_type = type(value).type_name
+        new_type = type(value).type_name
+        old_type = self.variables[variable]['type']
         
-        self.variables[variable]['previous'] = self.variables[variable]['value']
+        self.variables[variable]['previous'] = self.variables[variable]['value'] if old_type == new_type else None
         self.variables[variable]['value'] = value 
-        self.variables[variable]['type'] = var_type
+        self.variables[variable]['type'] = new_type
 
         return (variable, value)
     
@@ -78,9 +79,20 @@ class ScrollScriptInterpreter(Transformer):
         variable = items[1]
 
         if variable not in self.variables:
-            DispelError(f"Rune {variable} does not exist.")
+            raise RuneNotWrittenError(variable)
         
         self.variables.pop(variable)
+    
+    def seal_statement(self, items):
+        variable = items[1]
+        
+        if variable not in self.variables:
+            raise RuneNotWrittenError(variable)
+        
+        if self.variables[variable]['const']:
+            raise SealedRuneError(variable)
+        
+        self.variables[variable]['const'] = True
     
     # ----- Expressions ------
     
@@ -210,6 +222,6 @@ class ScrollScriptInterpreter(Transformer):
         name = str(items[0])
         if name not in self.variables:
             raise RuneNotWrittenError(name)
-        elif self.variables[name] is None:
-            raise DormantRuneError(name)
+        elif self.variables[name]['previous'] is None:
+            raise NoPastError(name)
         return self.variables[name]['previous']

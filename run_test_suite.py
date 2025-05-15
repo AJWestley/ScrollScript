@@ -1,4 +1,4 @@
-from sys import argv
+import traceback
 import sys
 import os
 import io
@@ -15,15 +15,15 @@ FAIL = '\033[91m'
 ENDC = '\033[0m'
 
 def main():
-    if len(argv) < 2:
+    if len(sys.argv) < 2:
         print("No directory provided.")
         return
     
-    path = argv[1]
+    path = sys.argv[1]
     test_files = sorted(glob.glob(f"{path}/*.scroll"))
     max_len = max(len(f.split("\\")[-1].split(".")[0]) for f in test_files)
 
-    print(OKBLUE + "\n#--- Running Test Suite ---#\n" + ENDC)
+    print(f"{HEADER}\n#--- Running Test Suite ---#\n{ENDC}")
     
     passed = 0
     failed = 0
@@ -41,8 +41,8 @@ def main():
         except Exception as e:
             print(FAIL + f"Failed (error: {e})" + ENDC)
     
-    print(f"\n{HEADER}Summary:")
-    print(f"{OKCYAN}Total: {passed+failed}")
+    print(f"{HEADER}\n\n#--- Summary ---#\n{ENDC}")
+    print(f"Total: {passed+failed}")
     print(f"{OKGREEN}Passed: {passed}")
     print(f"{FAIL}Failed: {failed}{ENDC}")
 
@@ -75,9 +75,9 @@ def run_file(program_path):
 
     except Exception as e:
         sys.stdout = sys_stdout
-        exception_name = type(e).__name__
+        full_trace = traceback.format_exc()
         with open(expected_output_path) as f:
             expected_output = f.read().strip()
-        return exception_name in expected_output or str(e).strip() == expected_output.strip()
+        return expected_output in full_trace
 
 if __name__ == '__main__': main()

@@ -1,28 +1,41 @@
 ?start: instruction+
 
-?instruction: print_statement
-        | var_declaration
-        | const_declaration
-        | assignment
-        | deletion
-
 
 # ----- Keywords -----
 
+INT.2: "int"
+FLT.2: "float"
+STR.2: "string"
+BOOL.2: "bool"
+
 LET.2: "rune"
+DELETE.2: "dispel"
+DECL_CONST.2: "sealed"
+CAST.2: "transmute"
+AS.2: "->"
+MAKE_CONST.2: "seal"
+
 PRINT.2: "chant"
 INPUT.2: "channel"
+
 prev.2: FROM DAYS OF YORE
 FROM.2: "from"
 DAYS.2: "days"
 OF.2: "of"
 YORE.2: "yore"
+
 TRUE.2: "Truthsung"
 FALSE.2: "Falsehood"
-AS.2: "->"
-CAST.2: "transmute"
-DELETE.2: "dispel"
-DECL_CONST.2: "sealed"
+
+
+# ----- Top-Level Syntax -----
+
+?instruction: print_statement
+        | var_declaration
+        | const_declaration
+        | assignment
+        | deletion
+        | seal_statement
 
 
 # ----- Assignments & Declarations -----
@@ -34,6 +47,8 @@ const_declaration: DECL_CONST LET var_name ["=" expression]
 assignment: var_name "=" expression
 
 deletion: DELETE var_name
+
+seal_statement: MAKE_CONST var_name
 
 
 # ----- Expressions -----
@@ -102,7 +117,7 @@ var_expr: VARIABLE prev         -> previous
 
 VARIABLE.1: /[a-zA-Z_][a-zA-Z0-9_]*/
 
-PRIMITIVE.2: "int" | "float" | "string" | "bool"
+PRIMITIVE.2: INT | FLT | STR | BOOL
 
 
 # ----- Input & Output -----
