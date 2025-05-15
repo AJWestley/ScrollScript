@@ -1,5 +1,5 @@
 '''
-This file contains all keywords in ScrollScript
+All keywords contained in ScrollScript
 '''
 
 VAR_DECLARATION = "rune"
@@ -12,6 +12,10 @@ YORE = "of"
 TRUE = "Truthsung"
 FALSE = "Falsehood"
 CAST_EXPR = "transmute"
+INTEGER = 'int'
+FLOAT = 'float'
+STRING = 'string'
+BOOLEAN = 'bool'
 
 KEYWORDS_LIST = {
     value

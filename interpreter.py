@@ -128,7 +128,9 @@ class ScrollScriptInterpreter(Transformer):
         return name
     
     def value_cast(self, items):
+        print(f"value_cast items: {items!r}")
         value = wrap_primitive(items[1])
+        
         target_type = str(items[3])
 
         try:
@@ -147,7 +149,7 @@ class ScrollScriptInterpreter(Transformer):
     def BOOLEAN(self, token):
         text = ScrollString(str(token))
         
-        return text.cast_to('bool')
+        return text.cast_to(keywords.BOOLEAN)
     
     def STRING(self, token):
         raw = str(token)[1:-1]

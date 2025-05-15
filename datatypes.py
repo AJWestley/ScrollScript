@@ -1,3 +1,5 @@
+from keywords import INTEGER, FLOAT, STRING, BOOLEAN, TRUE, FALSE
+
 class ScrollValue:
     def cast_to(self, target_type: str):
         raise NotImplementedError("Casting not implemented for this type.")
@@ -11,11 +13,11 @@ class ScrollValue:
 
 class ScrollBool(ScrollValue):
     
-    type_name = 'bool'
+    type_name = BOOLEAN
     
     def __init__(self, value):
         if isinstance(value, str):
-            self.value = value == "Truthsung"
+            self.value = value == TRUE
         else:
             self.value = bool(value)
 
@@ -23,10 +25,10 @@ class ScrollBool(ScrollValue):
         return self.value
 
     def __str__(self):
-        return "Truthsung" if self.value else "Falsehood"
+        return TRUE if self.value else FALSE
 
     def __repr__(self):
-        return f"<ScrollBool: {'Truthsung' if self.value else 'Falsehood'}>"
+        return f"<ScrollBool: {TRUE if self.value else FALSE}>"
 
     def __eq__(self, other):
         if isinstance(other, ScrollBool):
@@ -52,21 +54,21 @@ class ScrollBool(ScrollValue):
         return ScrollString(str(other) + str(self))
 
     def cast_to(self, target_type: str):
-        if target_type == "bool":
+        if target_type == BOOLEAN:
             return self
-        elif target_type == "int":
+        elif target_type == INTEGER:
             return ScrollInt(1 if self.value else 0)
-        elif target_type == "float":
+        elif target_type == FLOAT:
             return ScrollFloat(1.0 if self.value else 0.0)
-        elif target_type == "string":
+        elif target_type == STRING:
             return ScrollString(str(self))
         else:
-            raise ValueError(f"Cannot cast bool to {target_type}")
+            raise ValueError(f"Cannot cast {BOOLEAN} to {target_type}")
 
 
 class ScrollInt(ScrollValue):
     
-    type_name = 'int'
+    type_name = INTEGER
     
     def __init__(self, value: int):
         self.value = int(value)
@@ -94,23 +96,26 @@ class ScrollInt(ScrollValue):
     
     def __neg__(self):
         return ScrollInt(-self.value)
+    
+    def __str__(self):
+        return str(self.value)
 
     def cast_to(self, target_type: str):
-        if target_type == "int":
+        if target_type == INTEGER:
             return self
-        elif target_type == "float":
+        elif target_type == FLOAT:
             return ScrollFloat(float(self.value))
-        elif target_type == "bool":
+        elif target_type == BOOLEAN:
             return ScrollBool(self.value != 0)
-        elif target_type == "string":
+        elif target_type == STRING:
             return ScrollString(str(self.value))
         else:
-            raise ValueError(f"Cannot cast int to {target_type}")
+            raise ValueError(f"Cannot cast {INTEGER} to {target_type}")
 
 
 class ScrollFloat(ScrollValue):
     
-    type_name = 'float'
+    type_name = FLOAT
     
     def __init__(self, value: float):
         self.value = float(value)
@@ -138,18 +143,21 @@ class ScrollFloat(ScrollValue):
     
     def __neg__(self):
         return ScrollFloat(-self.value)
+    
+    def __str__(self):
+        return str(self.value)
 
     def cast_to(self, target_type: str):
-        if target_type == "float":
+        if target_type == FLOAT:
             return self
-        elif target_type == "int":
+        elif target_type == INTEGER:
             return ScrollInt(int(self.value))
-        elif target_type == "bool":
+        elif target_type == BOOLEAN:
             return ScrollBool(self.value != 0.0)
-        elif target_type == "string":
+        elif target_type == STRING:
             return ScrollString(str(self.value))
         else:
-            raise ValueError(f"Cannot cast float to {target_type}")
+            raise ValueError(f"Cannot cast {FLOAT} to {target_type}")
 
 
 class ScrollString(ScrollValue):
@@ -163,22 +171,22 @@ class ScrollString(ScrollValue):
         return ScrollString(self.value + str(other))
 
     def cast_to(self, target_type: str):
-        if target_type == "string":
+        if target_type == STRING:
             return self
-        elif target_type == "bool":
+        elif target_type == BOOLEAN:
             return ScrollBool(len(self.value) > 0)
-        elif target_type == "int":
+        elif target_type == INTEGER:
             try:
                 return ScrollInt(int(self.value))
             except ValueError:
-                raise ValueError(f"Cannot cast string '{self.value}' to int")
-        elif target_type == "float":
+                raise ValueError(f"Cannot cast {STRING} '{self.value}' to {INTEGER}")
+        elif target_type == FLOAT:
             try:
                 return ScrollFloat(float(self.value))
             except ValueError:
-                raise ValueError(f"Cannot cast string '{self.value}' to float")
+                raise ValueError(f"Cannot cast {STRING} '{self.value}' to {FLOAT}")
         else:
-            raise ValueError(f"Cannot cast string to {target_type}")
+            raise ValueError(f"Cannot cast {STRING} to {target_type}")
 
 
 def wrap_primitive(value):
