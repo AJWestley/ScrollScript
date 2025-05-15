@@ -1,6 +1,6 @@
 rune name = "AJ"
-rune age = transmute "23" -> int
-rune current_year = transmute "2025" -> int
+rune age = (transmute "23" -> int)
+rune current_year = (transmute "2025" -> int)
 
 sealed rune year_born = current_year - age
 

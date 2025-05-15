@@ -63,7 +63,7 @@ seal_statement: MAKE_CONST var_name
         | expression ADD_OP term        -> bin_expr_add
         | expression OR term            -> bin_expr_or
 
-?length_expr: LENGTH "(" expression ")"
+?length_expr: LENGTH expression
 
 ?term: factor
         | term MUL_OP factor    -> bin_expr_mul
@@ -111,7 +111,7 @@ OR: "|"
 
 NOT: "!"
 
-value_cast: CAST atom AS PRIMITIVE
+value_cast:  CAST atom AS PRIMITIVE
 
 # ----- Variables -----
 
