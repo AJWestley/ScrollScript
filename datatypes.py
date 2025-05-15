@@ -1,4 +1,6 @@
+from math import log10
 from keywords import INTEGER, FLOAT, STRING, BOOLEAN, TRUE, FALSE
+from exceptions import MeasureError
 
 class ScrollValue:
     def cast_to(self, target_type: str):
@@ -9,6 +11,9 @@ class ScrollValue:
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {str(self)}>"
+    
+    def __len__(self):
+        raise MeasureError(f"'{self.__class__.type_name}' runes cannot be measured.")
 
 
 class ScrollBool(ScrollValue):
@@ -102,6 +107,9 @@ class ScrollInt(ScrollValue):
     
     def __str__(self):
         return str(self.value)
+    
+    def __len__(self):
+        return int(log10(self.value) + 1)
 
     def cast_to(self, target_type: str):
         if target_type == INTEGER:
@@ -149,6 +157,10 @@ class ScrollFloat(ScrollValue):
     
     def __str__(self):
         return str(self.value)
+    
+    def __len__(self):
+        s = format(self.value, 'f').rstrip('0').rstrip('.')
+        return len(s.replace('-', '').replace('.', ''))
 
     def cast_to(self, target_type: str):
         if target_type == FLOAT:
@@ -172,6 +184,9 @@ class ScrollString(ScrollValue):
     
     def __add__(self, other):
         return ScrollString(self.value + str(other))
+    
+    def __len__(self):
+        return len(self.value)
 
     def cast_to(self, target_type: str):
         if target_type == STRING:

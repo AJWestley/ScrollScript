@@ -27,6 +27,8 @@ YORE.2: "yore"
 TRUE.2: "Truthsung"
 FALSE.2: "Falsehood"
 
+LENGTH.2: "measure"
+
 
 # ----- Top-Level Syntax -----
 
@@ -55,10 +57,13 @@ seal_statement: MAKE_CONST var_name
 
 ?expression: input_statement
         | value_cast
+        | length_expr
         | term
         | "-" term                      -> un_expr_negate
         | expression ADD_OP term        -> bin_expr_add
         | expression OR term            -> bin_expr_or
+
+?length_expr: LENGTH "(" expression ")"
 
 ?term: factor
         | term MUL_OP factor    -> bin_expr_mul

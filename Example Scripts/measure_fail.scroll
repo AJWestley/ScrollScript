@@ -1,0 +1,3 @@
+sealed rune a = Truthsung
+
+chant measure (a)

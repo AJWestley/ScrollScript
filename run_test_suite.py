@@ -42,9 +42,9 @@ def main():
             print(FAIL + f"Failed (error: {e})" + ENDC)
     
     print(f"{HEADER}\n\n#--- Summary ---#\n{ENDC}")
-    print(f"Total: {passed+failed}")
-    print(f"{OKGREEN}Passed: {passed}")
-    print(f"{FAIL}Failed: {failed}{ENDC}")
+    print(f"Total:\t{passed+failed}")
+    print(f"{OKGREEN}Passed:\t{passed}")
+    print(f"{FAIL}Failed:\t{failed}{ENDC}\n")
 
 def run_file(program_path):
     parser = ScrollScriptParser(GRAMMAR_PATH)

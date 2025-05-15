@@ -96,9 +96,6 @@ class ScrollScriptInterpreter(Transformer):
     
     # ----- Expressions ------
     
-    def string_concat(self, items):
-        return wrap_primitive(items[0]) + wrap_primitive(items[1])
-    
     def bin_expr_add(self, items):
         left, op, right = items
         left, right = wrap_primitive(left), wrap_primitive(right)
@@ -148,6 +145,11 @@ class ScrollScriptInterpreter(Transformer):
     
     def un_expr_not(self, items):
         return ScrollBool(not bool(wrap_primitive(items[1])))
+    
+    def length_expr(self, items):
+        variable = items[1]
+        sz = len(variable)
+        return wrap_primitive(sz)
     
     # ----- Variables ------
 
