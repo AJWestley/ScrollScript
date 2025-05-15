@@ -1,7 +1,7 @@
 import codecs
 from lark import Transformer
 import keywords
-from utils import is_keyword
+from utils import is_keyword, is_number
 from datatypes import wrap_primitive, ScrollBool, ScrollFloat, ScrollInt, ScrollString
 from exceptions import *
 
@@ -100,6 +100,9 @@ class ScrollScriptInterpreter(Transformer):
         left, op, right = items
         left, right = wrap_primitive(left), wrap_primitive(right)
         
+        if not (is_number(left) and is_number(right)):
+            raise CarelessSpellError(f"'{left.type_name}' + '{right.type_name}' is an invalid incantation.")
+        
         if op == "+":
             return left + right
         if op == "-":
@@ -136,6 +139,18 @@ class ScrollScriptInterpreter(Transformer):
         left, _, right = items
         left, right = wrap_primitive(left), wrap_primitive(right)
         return ScrollBool(left and right)
+    
+    def bin_expr_comp(self, items):
+        left, op, right = items
+        match op:
+            case "<": val = left < right
+            case ">": val = left > right
+            case "<=": val = left <= right
+            case ">=": val = left >= right
+            case "==": val = left == right
+            case "!=": val = left != right
+            case _: raise UnknownSpellError(op)
+        return ScrollBool(val)
     
     def group_expr(self, items):
         return wrap_primitive(items[0])
@@ -219,6 +234,23 @@ class ScrollScriptInterpreter(Transformer):
 
 
     # ----- Features ------
+    
+    def interpolated_string(self, items):
+        result = "".join([str(part) for part in items[1:-1]])
+        return wrap_primitive(result)
+    
+    def interpolation_part(self, items):
+        if len(items) == 1 and isinstance(items[0], ScrollString):
+            return items[0]
+        else:
+            return items[1]
+
+    def INTERP_TEXT(self, token): 
+        raw = str(token)
+        unescaped = bytes(raw, "utf-8").decode("unicode_escape")
+        return ScrollString(str(unescaped))
+
+    # ----- Unique Features ------
     
     def previous(self, items):
         name = str(items[0])

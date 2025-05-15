@@ -1,6 +1,5 @@
 ?start: instruction+
 
-
 # ----- Keywords -----
 
 INT.2: "int"
@@ -18,7 +17,7 @@ MAKE_CONST.2: "seal"
 PRINT.2: "chant"
 INPUT.2: "channel"
 
-prev.2: FROM DAYS OF YORE
+prev: FROM DAYS OF YORE 
 FROM.2: "from"
 DAYS.2: "days"
 OF.2: "of"
@@ -33,11 +32,11 @@ LENGTH.2: "measure"
 # ----- Top-Level Syntax -----
 
 ?instruction: print_statement
-        | var_declaration
-        | const_declaration
-        | assignment
-        | deletion
-        | seal_statement
+            | var_declaration
+            | const_declaration
+            | assignment
+            | deletion
+            | seal_statement
 
 
 # ----- Assignments & Declarations -----
@@ -55,73 +54,73 @@ seal_statement: MAKE_CONST var_name
 
 # ----- Expressions -----
 
-?expression: input_statement
-        | value_cast
-        | length_expr
-        | term
-        | "-" term                      -> un_expr_negate
-        | expression ADD_OP term        -> bin_expr_add
-        | expression OR term            -> bin_expr_or
+?expression: or_expr 
 
-?length_expr: LENGTH expression
+?or_expr: or_expr OR and_expr   -> bin_expr_or
+             | and_expr
 
-?term: factor
-        | term MUL_OP factor    -> bin_expr_mul
-        | term AND factor       -> bin_expr_and
+?and_expr: and_expr AND comp_expr -> bin_expr_and
+              | comp_expr
 
-?factor: power
-        | NOT factor                    -> un_expr_not
-        | factor "^" power              -> bin_expr_pow
-        | "(" expression ")"            -> group_expr
+?comp_expr: add_expr COMP_OP add_expr        -> bin_expr_comp
+        | add_expr
 
-?power: BOOLEAN
-        | STRING
-        | var_expr
-        | number
+?add_expr: add_expr ADD_OP mul_expr -> bin_expr_add
+                   | mul_expr
 
-?number: INTEGER | FLOAT
+?mul_expr: mul_expr MUL_OP unary_expr -> bin_expr_mul
+                         | unary_expr
+
+?unary_expr: NOT unary_expr         -> un_expr_not
+                 | "-" unary_expr         -> un_expr_negate
+                 | power_expr
+
+?power_expr: power_expr "^" primary_expr -> bin_expr_pow
+                | primary_expr
+
+?primary_expr: value_cast
+                   | input_statement
+                   | length_expr
+                   | BOOLEAN
+                   | interpolated_string
+                   | STRING
+                   | var_expr
+                   | number
+                   | "(" expression ")"            -> group_expr
+
+
+length_expr: LENGTH expression
 
 
 # ----- Data Types -----
 
 INTEGER.2: ["-"] DIGIT+
-
 FLOAT.2: ["-"] DIGIT+ "." DIGIT+
-
 STRING.2: "\"" /[^\"]*/ "\""
-
 BOOLEAN.2: TRUE | FALSE
-
 DIGIT.2: "0".."9"
+?number: INTEGER | FLOAT
 
-?atom: var_expr
-     | number
-     | STRING
-     | "(" expression ")"
 
 # ----- Operators -----
 
-ADD_OP: "+" | "-"
-
+ADD_OP: "+" | "-" 
 MUL_OP: "*" | "/" | "%"
 
-AND: "&"
+COMP_OP: "<" | ">" | "<=" | ">=" | "==" | "!="
 
-OR: "|"
-
+AND: "&&"
+OR: "||"
 NOT: "!"
 
-value_cast:  CAST atom AS PRIMITIVE
 
 # ----- Variables -----
 
 var_name: VARIABLE
-
-var_expr: VARIABLE prev         -> previous
+var_expr: VARIABLE prev     -> previous
         | VARIABLE
 
 VARIABLE.1: /[a-zA-Z_][a-zA-Z0-9_]*/
-
 PRIMITIVE.2: INT | FLT | STR | BOOL
 
 
@@ -130,11 +129,29 @@ PRIMITIVE.2: INT | FLT | STR | BOOL
 print_statement: PRINT expression
 
 input_statement: INPUT
-                | INPUT expression    -> prompted_input
+               | INPUT expression      -> prompted_input
 
 
 # ----- Features -----
 
+# Casting
+
+value_cast: CAST primary_expr AS PRIMITIVE 
+
+# String Interpolation
+
+interpolated_string: ESCAPED_STRING_START interpolation_part* ESCAPED_STRING_END
+
+interpolation_part: INTERP_TEXT
+                  | INTERP_EXPR_START expression INTERP_EXPR_END
+
+ESCAPED_STRING_START: "$\""
+ESCAPED_STRING_END: "\""
+
+INTERP_EXPR_START: "{"
+INTERP_EXPR_END: "}"
+
+INTERP_TEXT: /([^{"}]|\\[{"}])+/
 
 # ----- Comments -----
 

@@ -2,11 +2,11 @@ rune a = "Alex"
 
 a = measure a
 
-chant a + "\n"
+chant $"{a}\n"
 
 a = 1000000
 
-chant (measure a) + "\n"
+chant $"{(measure a)}\n"
 
 chant measure -3.14
 

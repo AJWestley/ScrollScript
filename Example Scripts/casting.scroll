@@ -1,8 +1,8 @@
 rune x = "42"
-chant transmute x -> int + "\n"        ~~ prints 42
+chant $"{transmute x -> int}\n"        ~~ prints 42
 
 rune y = 0
-chant transmute y -> bool + "\n"       ~~ prints Falsehood
+chant $"{transmute y -> bool}\n"       ~~ prints Falsehood
 
 rune z = 1.5
-chant (transmute (z) -> string)  + "\n"     ~~ prints "1.5"
+chant $"{(transmute (z) -> string)}\n"     ~~ prints "1.5"

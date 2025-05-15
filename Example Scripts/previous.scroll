@@ -2,6 +2,6 @@ rune mynum = 4
 
 mynum = 10
 
-chant mynum + "\n"
+chant $"{mynum}\n"
 
-chant mynum from days of yore + "\n"
+chant $"{mynum from days of yore}\n"

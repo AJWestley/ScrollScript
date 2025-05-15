@@ -1,7 +1,7 @@
 rune a = 10
 
-chant a + "\n"
+chant $"{a}\n"
 
 a = 2
 
-chant a + "\n"
+chant $"{a}\n"

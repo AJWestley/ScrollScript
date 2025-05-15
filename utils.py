@@ -1,4 +1,4 @@
-from keywords import KEYWORDS_LIST
+from keywords import KEYWORDS_LIST, INTEGER, FLOAT
 
 def is_keyword(name):
     """
@@ -11,6 +11,18 @@ def is_keyword(name):
         bool: True if it is a constant, False otherwise.
     """
     return name in KEYWORDS_LIST
+
+def is_number(name):
+    """
+    Checks if a variable is a number.
+
+    Args:
+        name: The variable to check.
+
+    Returns:
+        bool: True if it is a float or int, False otherwise.
+    """
+    return name.type_name in [INTEGER, FLOAT]
 
 def load_file(file_path):
     """

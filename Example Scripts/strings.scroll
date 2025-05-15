@@ -1,8 +1,8 @@
 rune a = "hi there" 
 rune b = " human "
 
-rune c = a + b
+rune c = $"{a}{b}"
 
-c = c + 1 + " " + Truthsung + "\n"
+c = $"{c}{1} {Truthsung}\n"
 
 chant c

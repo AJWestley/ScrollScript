@@ -49,6 +49,10 @@ class UnknownSpellError(SpellError):
     def __init__(self, name):
         super().__init__(f"Unknown spell:'{name}'")
 
+class CarelessSpellError(SpellError):
+    def __init__(self, message):
+        super().__init__(message)
+
 class MeasureError(SpellError):
     def __init__(self, message):
         super().__init__(message)
