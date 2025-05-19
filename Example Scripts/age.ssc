@@ -4,4 +4,4 @@ rune current_year = (transmute "2025" -> int)
 
 sealed rune year_born = current_year - age
 
-chant $"{name}, you were born in {year_born}.\n"
+reveal $"{name}, you were born in {year_born}.\n"

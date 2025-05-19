@@ -6,6 +6,7 @@ All keywords contained in ScrollScript
 VAR_DECLARATION = "rune"
 CAST_EXPR = "transmute"
 CONST_DECLARATION = "sealed"
+VAR_TO_CONST = "seal"
 
 # ----- Data Types -----
 INTEGER = 'int'
@@ -13,8 +14,13 @@ FLOAT = 'float'
 STRING = 'string'
 BOOLEAN = 'bool'
 
+# ----- Control Flow -----
+IF = 'if'
+ELIF = 'elif'
+ELSE = 'else'
+
 # ----- I/O -----
-PRINT = "chant"
+PRINT = "reveal"
 INPUT = "channel"
 
 # ----- Booleans -----
@@ -23,6 +29,7 @@ FALSE = "Falsehood"
 
 # ----- Standard Features -----
 DELETE = "dispel"
+LENGTH = "measure"
 
 # ----- Unique Features -----
 FROM = "from"

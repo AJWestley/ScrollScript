@@ -108,6 +108,24 @@ class ScrollInt(ScrollValue):
     def __str__(self):
         return str(self.value)
     
+    def __eq__(self, other):
+        return self.value == other.value
+    
+    def __ne__(self, other):
+        return self.value != other.value
+    
+    def __lt__(self, other):
+        return self.value < other.value
+    
+    def __gt__(self, other):
+        return self.value > other.value
+    
+    def __le__(self, other):
+        return self.value <= other.value
+    
+    def __ge__(self, other):
+        return self.value >= other.value
+    
     def __len__(self):
         return int(log10(self.value) + 1)
 
@@ -158,6 +176,24 @@ class ScrollFloat(ScrollValue):
     def __str__(self):
         return str(self.value)
     
+    def __eq__(self, other):
+        return self.value == other.value
+    
+    def __ne__(self, other):
+        return self.value != other.value
+    
+    def __lt__(self, other):
+        return self.value < other.value
+    
+    def __gt__(self, other):
+        return self.value > other.value
+    
+    def __le__(self, other):
+        return self.value <= other.value
+    
+    def __ge__(self, other):
+        return self.value >= other.value
+    
     def __len__(self):
         s = format(self.value, 'f').rstrip('0').rstrip('.')
         return len(s.replace('-', '').replace('.', ''))
@@ -184,6 +220,24 @@ class ScrollString(ScrollValue):
     
     def __add__(self, other):
         return ScrollString(self.value + str(other))
+    
+    def __eq__(self, other):
+        return self.value == other.value
+    
+    def __ne__(self, other):
+        return self.value != other.value
+    
+    def __lt__(self, other):
+        return self.value < other.value
+    
+    def __gt__(self, other):
+        return self.value > other.value
+    
+    def __le__(self, other):
+        return self.value <= other.value
+    
+    def __ge__(self, other):
+        return self.value >= other.value
     
     def __len__(self):
         return len(self.value)

@@ -1,0 +1,22 @@
+rune a = Truthsung
+rune b = Falsehood
+rune c = Truthsung
+
+reveal $"{a && b}\n"
+reveal $"{a && a}\n"
+reveal $"{b && a}\n"
+reveal $"{b && b}\n\n" 
+
+reveal $"{a || Falsehood}\n"
+reveal $"{Truthsung || Truthsung}\n"
+reveal $"{Falsehood || Falsehood}\n"
+reveal $"{Falsehood || Truthsung}\n\n"
+
+reveal $"{!a} {!!a}\n\n"
+
+~~ test the full shebang
+
+reveal $"{a || b && c}\n"
+reveal $"{(a || b) && c}\n"
+reveal $"{a && b || c}\n"
+reveal $"{a && (b || c)}\n"

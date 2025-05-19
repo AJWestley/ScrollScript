@@ -1,0 +1,43 @@
+if (Falsehood) {
+    reveal "Hello\n"
+}
+
+rune ryan = 21
+rune june = 14
+rune Mike = 30
+
+if (ryan >= 18) {
+    reveal "Ryan can drink.\n"
+}
+else {
+    reveal "Ryan cannot drink.\n"
+}
+
+if (Mike == 69) {
+    reveal "Nice.\n"
+}
+
+if (june > 20) {
+    reveal "ADULT\n"
+}
+elif (june < 20 && june > 12) {
+    reveal "TEENAGER\n"
+}
+else {
+    reveal "CHILD\n"
+}
+
+rune havingFun = Truthsung
+
+if (havingFun == Truthsung) {
+    reveal "Woo Hoo!\n"
+}
+
+rune name = "Danny"
+
+if (!(name == "Danny")) {
+    reveal "No Dannny Boy\n"
+}
+else {
+    reveal "Oh Dannny Boy\n"
+}

@@ -1,25 +1,33 @@
 import codecs
-from lark import Transformer
+from lark import Token
 import keywords
 from utils import is_keyword, is_number
 from datatypes import wrap_primitive, ScrollBool, ScrollFloat, ScrollInt, ScrollString
 from exceptions import *
 
-class ScrollScriptInterpreter(Transformer):
+class ScrollScriptInterpreter:
     def __init__(self):
         self.variables = {}
     
     
+    def start(self, tree):
+        for instruction in tree.children:
+            # print(instruction.pretty())
+            self.execute(instruction)
+    
+    
     # ----- Assignments & Declarations ------
     
-    def var_declaration(self, items):
-        variable = items[1]
+    def var_declaration(self, tree):
+        items = tree.children
+        variable = self.execute(items[1])
 
         if variable in self.variables:
             raise RuneAlreadyWrittenError(variable)
-
+        
         if len(items) > 2 and items[2] is not None:
-            value = wrap_primitive(items[2])
+            value = self.execute(items[2])
+            value = wrap_primitive(value)
             var_type = type(value).type_name
         else:
             value = None
@@ -32,16 +40,16 @@ class ScrollScriptInterpreter(Transformer):
             "previous": None
         }
 
-        return (variable, value)
-
-    def const_declaration(self, items):
-        variable = items[2]
+    def const_declaration(self, tree):
+        items = tree.children
+        variable = self.execute(items[2])
 
         if variable in self.variables:
             raise RuneAlreadyWrittenError(variable)
 
         if len(items) > 3 and items[3] is not None:
-            value = wrap_primitive(items[3])
+            value = self.execute(items[3])
+            value = wrap_primitive(value)
             var_type = type(value).type_name
         else:
             value = None
@@ -53,51 +61,47 @@ class ScrollScriptInterpreter(Transformer):
             "const": True,
             "previous": None
         }
-
-        return (variable, value)
     
-    def assignment(self, items):
-        variable, value = items
+    def assignment(self, tree):
+        name, value = self.execute(tree.children[0]), self.execute(tree.children[1])
         
-        if variable not in self.variables:
-            raise RuneNotWrittenError(variable)
+        if name not in self.variables:
+            raise RuneNotWrittenError(name)
         
-        if self.variables[variable]['const']:
-            raise SealedRuneError(variable)
+        if self.variables[name]['const']:
+            raise SealedRuneError(name)
         
         value = wrap_primitive(value)
         new_type = type(value).type_name
-        old_type = self.variables[variable]['type']
+        old_type = self.variables[name]['type']
         
-        self.variables[variable]['previous'] = self.variables[variable]['value'] if old_type == new_type else None
-        self.variables[variable]['value'] = value 
-        self.variables[variable]['type'] = new_type
-
-        return (variable, value)
+        self.variables[name]['previous'] = self.variables[name]['value'] if old_type == new_type else None
+        self.variables[name]['value'] = value 
+        self.variables[name]['type'] = new_type
     
-    def deletion(self, items):
-        variable = items[1]
+    def deletion(self, tree):
+        variable = self.execute(tree.children[1])
 
         if variable not in self.variables:
             raise RuneNotWrittenError(variable)
         
         self.variables.pop(variable)
     
-    def seal_statement(self, items):
-        variable = items[1]
+    def seal_statement(self, tree):
+        name = self.execute(tree.children[1])
         
-        if variable not in self.variables:
-            raise RuneNotWrittenError(variable)
+        if name not in self.variables:
+            raise RuneNotWrittenError(name)
         
-        if self.variables[variable]['const']:
-            raise SealedRuneError(variable)
+        if self.variables[name]['const']:
+            raise SealedRuneError(name)
         
-        self.variables[variable]['const'] = True
+        self.variables[name]['const'] = True
     
     # ----- Expressions ------
     
-    def bin_expr_add(self, items):
-        left, op, right = items
+    def bin_expr_add(self, tree):
+        left, op, right = list(map(self.execute, tree.children))
         left, right = wrap_primitive(left), wrap_primitive(right)
         
         if not (is_number(left) and is_number(right)):
@@ -110,8 +114,8 @@ class ScrollScriptInterpreter(Transformer):
         
         raise UnknownSpellError(op)
     
-    def bin_expr_mul(self, items):
-        left, op, right = items
+    def bin_expr_mul(self, tree):
+        left, op, right = list(map(self.execute, tree.children))
         left, right = wrap_primitive(left), wrap_primitive(right)
         
         if op == "*":
@@ -125,23 +129,23 @@ class ScrollScriptInterpreter(Transformer):
         
         raise UnknownSpellError(op)
     
-    def bin_expr_pow(self, items):
-        left, right = wrap_primitive(items[0]), wrap_primitive(items[1])
-        
+    def bin_expr_pow(self, tree):
+        left, right = self.execute(tree.children[0]), self.execute(tree.children[1])
+        left, right = wrap_primitive(left), wrap_primitive(right)
         return left ** right
     
-    def bin_expr_or(self, items):
-        left, _, right = items
+    def bin_expr_or(self, tree):
+        left, right = self.execute(tree.children[0]), self.execute(tree.children[2])
         left, right = wrap_primitive(left), wrap_primitive(right)
         return ScrollBool(left or right)
     
-    def bin_expr_and(self, items):
-        left, _, right = items
+    def bin_expr_and(self, tree):
+        left, right = self.execute(tree.children[0]), self.execute(tree.children[2])
         left, right = wrap_primitive(left), wrap_primitive(right)
         return ScrollBool(left and right)
     
-    def bin_expr_comp(self, items):
-        left, op, right = items
+    def bin_expr_comp(self, tree):
+        left, op, right = list(map(self.execute, tree.children))
         match op:
             case "<": val = left < right
             case ">": val = left > right
@@ -152,45 +156,81 @@ class ScrollScriptInterpreter(Transformer):
             case _: raise UnknownSpellError(op)
         return ScrollBool(val)
     
-    def group_expr(self, items):
-        return wrap_primitive(items[0])
+    def group_expr(self, tree):
+        value = self.execute(tree.children[0])
+        return wrap_primitive(value)
 
-    def un_expr_negate(self, items):
-        return -wrap_primitive(items[0])
+    def un_expr_negate(self, tree):
+        value = self.execute(tree.children[0])
+        return -wrap_primitive(value)
     
-    def un_expr_not(self, items):
-        return ScrollBool(not bool(wrap_primitive(items[1])))
+    def un_expr_not(self, tree):
+        value = self.execute(tree.children[1])
+        return ScrollBool(not bool(wrap_primitive(value)))
     
-    def length_expr(self, items):
-        variable = items[1]
+    def length_expr(self, tree):
+        variable = self.execute(tree.children[1])
         sz = len(variable)
         return wrap_primitive(sz)
     
+    
+    # ----- Control Flow ------
+    
+    def block(self, tree):
+        for instruction in tree.children:
+            self.execute(instruction)
+    
+    def if_statement(self, tree):
+        i = 0
+        while i < len(tree.children) and tree.children[i] is not None:
+            if_type = self.execute(tree.children[i])
+            if if_type == keywords.ELSE:
+                self.execute(tree.children[i+1])
+                break
+            condition = self.execute(tree.children[i+1])
+            if_block = tree.children[i+2]
+            if condition:
+                self.execute(if_block)
+                break
+            i += 3
+
+    def IF(self, token):
+        return str(token.value)
+
+    def ELIF(self, token):
+        return str(token.value)
+    
+    def ELSE(self, token):
+        return str(token.value)
+    
+    
     # ----- Variables ------
 
-    def var_expr(self, items):
-        name = str(items[0])
+    def var_expr(self, tree):
+        name = self.execute(tree.children[0])
+        name = str(name)
         if name not in self.variables:
             raise RuneNotWrittenError(name)
         elif self.variables[name]['value'] is None:
             raise DormantRuneError(name)
         return self.variables[name]['value']
     
-    def var_name(self, items):
-        return str(items[0])
+    def var_name(self, tree):
+        value = self.execute(tree.children[0])
+        return str(value)
     
     def VARIABLE(self, token):
         name = str(token)
-        
         if is_keyword(name):
             raise FundamentalRuneError(name)
-    
         return name
     
-    def value_cast(self, items):
-        value = wrap_primitive(items[1])
+    def value_cast(self, tree):
+        value = self.execute(tree.children[1])
+        value = wrap_primitive(value)
         
-        target_type = str(items[3])
+        target_type = self.execute(tree.children[3])
+        target_type = str(target_type)
 
         try:
             return value.cast_to(target_type)
@@ -206,40 +246,50 @@ class ScrollScriptInterpreter(Transformer):
         return ScrollFloat(float(token))
     
     def BOOLEAN(self, token):
-        text = ScrollString(str(token))
-        
-        return text.cast_to(keywords.BOOLEAN)
+        return ScrollBool(str(token))
     
     def STRING(self, token):
         raw = str(token)[1:-1]
-
         unescaped = bytes(raw, "utf-8").decode("unicode_escape")
         return ScrollString(str(unescaped))
     
+    def DATA_TYPE(self, token):
+        return str(token.value)
+    
     # ----- Operators ------
     
+    def ADD_OP(self, token):
+        return str(token.value)
     
+    def MUL_OP(self, token):
+        return str(token.value)
     
+    def COMP_OP(self, token):
+        return str(token.value)
     
     # ----- Input & Output ------
     
-    def print_statement(self, items):
-        print(str(items[1]), end='')
+    def print_statement(self, tree):
+        text = self.execute(tree.children[1])
+        print(str(text), end='')
     
-    def input_statement(self, items):
+    def input_statement(self, tree):
         return input()
     
-    def prompted_input(self, items):
-        return input(items[1])
+    def prompted_input(self, tree):
+        text = self.execute(tree.children[1])
+        return input(str(text))
 
 
     # ----- Features ------
     
-    def interpolated_string(self, items):
-        result = "".join([str(part) for part in items[1:-1]])
+    def interpolated_string(self, tree):
+        items = list(map(self.execute, tree.children[1:-1]))
+        result = "".join([str(part) for part in items])
         return wrap_primitive(result)
     
-    def interpolation_part(self, items):
+    def interpolation_part(self, tree):
+        items = list(map(self.execute, tree.children))
         if len(items) == 1 and isinstance(items[0], ScrollString):
             return items[0]
         else:
@@ -249,13 +299,29 @@ class ScrollScriptInterpreter(Transformer):
         raw = str(token)
         unescaped = bytes(raw, "utf-8").decode("unicode_escape")
         return ScrollString(str(unescaped))
+    
+    def INTERP_EXPR_START(self, _): 
+        pass
+    
+    def INTERP_EXPR_END(self, _): 
+        pass
+    
 
     # ----- Unique Features ------
     
-    def previous(self, items):
-        name = str(items[0])
+    def previous(self, tree):
+        name = self.execute(tree.children[0])
+        name = str(name)
         if name not in self.variables:
             raise RuneNotWrittenError(name)
         elif self.variables[name]['previous'] is None:
             raise NoPastError(name)
         return self.variables[name]['previous']
+    
+    def execute(self, node):
+        method_name = node.type if isinstance(node, Token) else node.data
+        func = getattr(self, method_name, None)
+        if callable(func):
+            return func(node)
+        else:
+            raise ScrollError(f"Something is amiss in the arcane ({method_name}).")

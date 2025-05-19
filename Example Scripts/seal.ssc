@@ -2,10 +2,10 @@ rune a = "hello"
 
 a = "bye"
 
-chant a
+reveal a
 
 seal a
 
 a = "hi"
 
-chant a
+reveal a

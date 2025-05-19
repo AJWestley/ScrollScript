@@ -10,7 +10,7 @@ rune c = 2.5 % 3
 
 rune d = -c
 
-chant $"a = {a}\n"
-chant $"b = {b}\n"
-chant $"c = {c}\n"
-chant $"d = {d}\n"
+reveal $"a = {a}\n"
+reveal $"b = {b}\n"
+reveal $"c = {c}\n"
+reveal $"d = {d}\n"

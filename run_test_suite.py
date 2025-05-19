@@ -20,7 +20,7 @@ def main():
         return
     
     path = sys.argv[1]
-    test_files = sorted(glob.glob(f"{path}/*.scroll"))
+    test_files = sorted(glob.glob(f"{path}/*.ssc"))
     max_len = max(len(f.split("\\")[-1].split(".")[0]) for f in test_files)
 
     print(f"{HEADER}\n#--- Running Test Suite ---#\n{ENDC}")
@@ -59,12 +59,12 @@ def run_file(program_path):
     expected_output_path = os.path.join(
         os.path.dirname(program_path),
         "output",
-        os.path.basename(program_path).replace(".scroll", ".o")
+        os.path.basename(program_path).replace(".ssc", ".out")
     )
 
     try:
         parse_tree = parser.parse(program_path)
-        interpreter.transform(parse_tree)
+        interpreter.start(parse_tree)
         sys.stdout = sys_stdout
         actual_output = captured_output.getvalue().strip()
 

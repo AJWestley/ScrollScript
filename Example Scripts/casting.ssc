@@ -1,0 +1,8 @@
+rune x = "42"
+reveal $"{transmute x -> int}\n"        ~~ prints 42
+
+rune y = 0
+reveal $"{transmute y -> bool}\n"       ~~ prints Falsehood
+
+rune z = 1.5
+reveal $"{(transmute (z) -> string)}\n"     ~~ prints "1.5"

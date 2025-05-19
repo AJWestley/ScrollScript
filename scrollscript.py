@@ -17,7 +17,7 @@ def main():
     
     interpret = ScrollScriptInterpreter()
 
-    interpret.transform(parse_tree)
+    interpret.start(parse_tree)
 
 
 if __name__ == '__main__': main()

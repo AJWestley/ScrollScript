@@ -5,4 +5,4 @@ rune c = $"{a}{b}"
 
 c = $"{c}{1} {Truthsung}\n"
 
-chant c
+reveal c

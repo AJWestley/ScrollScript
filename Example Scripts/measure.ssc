@@ -1,0 +1,12 @@
+rune a = "Alex"
+
+a = measure a
+
+reveal $"{a}\n"
+
+a = 1000000
+
+reveal $"{(measure a)}\n"
+
+reveal measure -3.14
+

@@ -1,0 +1,7 @@
+rune a = 10
+
+reveal $"{a}\n"
+
+a = 2
+
+reveal $"{a}\n"
