@@ -1,4 +1,4 @@
-if (Falsehood) {
+foretell (Falsehood) {
     reveal "Hello\n"
 }
 
@@ -6,38 +6,38 @@ rune ryan = 21
 rune june = 14
 rune Mike = 30
 
-if (ryan >= 18) {
+foretell (ryan >= 18) {
     reveal "Ryan can drink.\n"
 }
-else {
+resolve {
     reveal "Ryan cannot drink.\n"
 }
 
-if (Mike == 69) {
+foretell (Mike == 69) {
     reveal "Nice.\n"
 }
 
-if (june > 20) {
+foretell (june > 20) {
     reveal "ADULT\n"
 }
-elif (june < 20 && june > 12) {
+shift (june < 20 && june > 12) {
     reveal "TEENAGER\n"
 }
-else {
+resolve {
     reveal "CHILD\n"
 }
 
 rune havingFun = Truthsung
 
-if (havingFun == Truthsung) {
+foretell (havingFun == Truthsung) {
     reveal "Woo Hoo!\n"
 }
 
 rune name = "Danny"
 
-if (!(name == "Danny")) {
+foretell (!(name == "Danny")) {
     reveal "No Dannny Boy\n"
 }
-else {
+resolve {
     reveal "Oh Dannny Boy\n"
 }

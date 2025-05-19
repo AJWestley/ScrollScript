@@ -28,9 +28,9 @@ FALSE.2: "Falsehood"
 
 LENGTH.2: "measure"
 
-IF.2: "if"
-ELIF.2: "elif"
-ELSE.2: "else"
+IF.2: "foretell"
+ELIF.2: "shift"
+ELSE.2: "resolve"
 
 
 # ----- Top-Level Syntax -----

@@ -15,9 +15,9 @@ STRING = 'string'
 BOOLEAN = 'bool'
 
 # ----- Control Flow -----
-IF = 'if'
-ELIF = 'elif'
-ELSE = 'else'
+IF = 'foretell'
+ELIF = 'shift'
+ELSE = 'resolve'
 
 # ----- I/O -----
 PRINT = "reveal"
