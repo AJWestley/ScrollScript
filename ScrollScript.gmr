@@ -82,9 +82,10 @@ maybe_statement: MAYBE ["(" ratio ")"] "{" block "}" [ELSE "{" block "}"]
 
 ratio: INTEGER ":" INTEGER
 
-loop_statement: LOOP "(" range_expression ")" "{" block "}"     -> for_range
-                | LOOP "(" AD INFINITUM ")" "{" block "}"       -> infinite_loop
-                | LOOP "(" UNTIL expression ")" "{" block "}"   -> while_loop
+loop_statement: LOOP "(" range_expression ")" "{" block "}"             -> for_range
+                | LOOP "(" AD INFINITUM ")" "{" block "}"               -> infinite_loop
+                | LOOP "(" UNTIL expression ")" "{" block "}"           -> while_loop
+                | LOOP "(" var_name IN expression ")" "{" block "}"     -> foreach_loop
 
 range_expression: var_name expression "->" expression ["|" expression]
 
@@ -127,9 +128,11 @@ loop_interrupt: BREAK | CONTINUE
                    | var_expr
                    | number
                    | "(" expression ")"            -> group_expr
-
+                   | index_expr
 
 length_expr: LENGTH expression
+
+index_expr: var_name "::" expression
 
 
 # ----- Data Types -----

@@ -258,6 +258,14 @@ class ScrollScriptInterpreter:
         sz = len(variable)
         return wrap_primitive(sz)
     
+    def index_expr(self, tree):
+        var_name = self.execute(tree.children[0])
+        index = self.execute(tree.children[1])
+        var_value = self.variables[var_name]['value']
+        if not isinstance(var_value, ScrollString):
+            raise CarelessSpellError(f"'{var_value.type_name}'::{index.type_name} is an invalid incantation.")
+        return wrap_primitive(var_value[index.value])
+    
     
     # ----- Control Flow ------
     
@@ -324,9 +332,38 @@ class ScrollScriptInterpreter:
         block = tree.children[3]
         while True:
             expression = self.execute(tree.children[2])
-            # print(self.variables)
             if expression:
                 break
+            try:
+                self.execute(block)
+            except ShatterError:
+                break
+            except PersistenceError:
+                pass
+    
+    def foreach_loop(self, tree):
+        name = self.execute(tree.children[1])
+        expr = self.execute(tree.children[3])
+        block = tree.children[4]
+
+        if name in self.variables:
+            raise RuneAlreadyWrittenError(name)
+        if len(expr) == 0:
+            return
+
+        self.variables[name] = {
+            "value": None,
+            "type": expr[0].type_name,
+            "const": False,
+            "previous": None
+        }
+
+        i = 0
+        while i < len(expr):
+            self.variables[name]['previous'] = self.variables[name]['value']
+            self.variables[name]['value'] = expr[i]
+            i += 1 
+            
             try:
                 self.execute(block)
             except ShatterError:

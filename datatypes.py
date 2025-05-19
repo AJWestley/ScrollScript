@@ -253,6 +253,9 @@ class ScrollString(ScrollValue):
     
     def __len__(self):
         return len(self.value)
+    
+    def __getitem__(self, index):
+        return ScrollString(self.value[index])
 
     def cast_to(self, target_type: str):
         if target_type == STRING:
