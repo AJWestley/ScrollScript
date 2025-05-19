@@ -1,4 +1,4 @@
-rune birth_month = listen "What is your birth month? "
+rune birth_month = "march"
 
 rune success = Truthsung
 

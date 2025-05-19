@@ -33,6 +33,7 @@ ELIF.2: "shift"
 ELSE.2: "resolve"
 MAYBE.2: "mayhaps"
 LOOP.2: "cycle"
+UNTIL.2: "fireball"
 IN.2: "betwixt"
 AD.2: "ad"
 INFINITUM.2: "infinitum"
@@ -82,7 +83,8 @@ maybe_statement: MAYBE ["(" ratio ")"] "{" block "}" [ELSE "{" block "}"]
 ratio: INTEGER ":" INTEGER
 
 loop_statement: LOOP "(" range_expression ")" "{" block "}"     -> for_range
-                | LOOP "(" AD INFINITUM ")" "{" block "}"            -> infinite_loop
+                | LOOP "(" AD INFINITUM ")" "{" block "}"       -> infinite_loop
+                | LOOP "(" UNTIL expression ")" "{" block "}"   -> while_loop
 
 range_expression: var_name expression "->" expression ["|" expression]
 

@@ -130,7 +130,7 @@ class ScrollScriptInterpreter:
         
         if not is_number(self.variables[name]['value']) or not is_number(value):
             raise CarelessSpellError(f"'{self.variables[name]['type']}' {op} '{value.type_name}' is an invalid incantation.")
-        
+
         match op:
             case "+=": self.variables[name]['value'] += value
             case "-=": self.variables[name]['value'] -= value
@@ -320,6 +320,20 @@ class ScrollScriptInterpreter:
         
         del self.variables[var_name]
     
+    def while_loop(self, tree):
+        block = tree.children[3]
+        while True:
+            expression = self.execute(tree.children[2])
+            # print(self.variables)
+            if expression:
+                break
+            try:
+                self.execute(block)
+            except ShatterError:
+                break
+            except PersistenceError:
+                pass
+    
     def infinite_loop(self, tree):
         block = tree.children[3]
         while True:
@@ -368,6 +382,9 @@ class ScrollScriptInterpreter:
         return str(token.value)
     
     def ELSE(self, token):
+        return str(token.value)
+
+    def UNTIL(self, token):
         return str(token.value)
     
     def AD(self, token):
