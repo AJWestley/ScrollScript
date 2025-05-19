@@ -31,6 +31,7 @@ LENGTH.2: "measure"
 IF.2: "foretell"
 ELIF.2: "shift"
 ELSE.2: "resolve"
+MAYBE.2: "mayhaps"
 
 
 # ----- Top-Level Syntax -----
@@ -42,6 +43,7 @@ ELSE.2: "resolve"
             | deletion
             | seal_statement
             | if_statement
+            | maybe_statement
 
 
 # ----- Assignments & Declarations -----
@@ -59,9 +61,14 @@ seal_statement: MAKE_CONST var_name
 
 # ----- Control Flow -----
 
+block: instruction*
+
 if_statement: IF "(" expression ")" "{" block "}" (ELIF "(" expression ")" "{" block "}")* [ELSE "{" block "}" ]
 
-block: instruction*
+maybe_statement: MAYBE ["(" ratio ")"] "{" block "}" [ELSE "{" block "}"]
+
+ratio: INTEGER ":" INTEGER
+
 
 # ----- Expressions -----
 

@@ -1,4 +1,4 @@
-import codecs
+import random
 from lark import Token
 import keywords
 from utils import is_keyword, is_number
@@ -193,6 +193,23 @@ class ScrollScriptInterpreter:
                 self.execute(if_block)
                 break
             i += 3
+    
+    def maybe_statement(self, tree):
+        ratio = tree.children[1]
+        if ratio is not None:
+            ratio = self.execute(ratio)
+        else:
+            ratio = 0.5
+
+        block = tree.children[2]
+        if random.uniform(0, 1) < ratio:
+            self.execute(block)
+    
+    def ratio(self, tree):
+        left, right = int(tree.children[0].value), int(tree.children[1].value)
+        if left < 0 or right < 0 or left + right == 0:
+            raise CarelessSpellError(f"'{left}' : '{right}' is an invalid incantation.")
+        return left / (left + right)
 
     def IF(self, token):
         return str(token.value)

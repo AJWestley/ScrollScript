@@ -1,6 +1,6 @@
-'''
+"""
 All keywords contained in ScrollScript
-'''
+"""
 
 # ----- Variables -----
 VAR_DECLARATION = "rune"
@@ -9,15 +9,16 @@ CONST_DECLARATION = "sealed"
 VAR_TO_CONST = "seal"
 
 # ----- Data Types -----
-INTEGER = 'int'
-FLOAT = 'float'
-STRING = 'string'
-BOOLEAN = 'bool'
+INTEGER = "int"
+FLOAT = "float"
+STRING = "string"
+BOOLEAN = "bool"
 
 # ----- Control Flow -----
-IF = 'foretell'
-ELIF = 'shift'
-ELSE = 'resolve'
+IF = "foretell"
+ELIF = "shift"
+ELSE = "resolve"
+MAYBE = "mayhaps"
 
 # ----- I/O -----
 PRINT = "reveal"

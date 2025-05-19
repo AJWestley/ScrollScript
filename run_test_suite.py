@@ -2,11 +2,9 @@ import traceback
 import sys
 import os
 import io
+import random
 import glob
-from interpreter import ScrollScriptInterpreter
-from parser import ScrollScriptParser
-
-GRAMMAR_PATH = "ScrollScript.gmr"
+from scrollscript import run_program
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -22,6 +20,8 @@ def main():
     path = sys.argv[1]
     test_files = sorted(glob.glob(f"{path}/*.ssc"))
     max_len = max(len(f.split("\\")[-1].split(".")[0]) for f in test_files)
+
+    random.seed(42)
 
     print(f"{HEADER}\n#--- Running Test Suite ---#\n{ENDC}")
     
@@ -47,8 +47,6 @@ def main():
     print(f"{FAIL}Failed:\t{failed}{ENDC}\n")
 
 def run_file(program_path):
-    parser = ScrollScriptParser(GRAMMAR_PATH)
-    interpreter = ScrollScriptInterpreter()
 
     # Capture printed output
     captured_output = io.StringIO()
@@ -63,8 +61,7 @@ def run_file(program_path):
     )
 
     try:
-        parse_tree = parser.parse(program_path)
-        interpreter.start(parse_tree)
+        run_program(program_path)
         sys.stdout = sys_stdout
         actual_output = captured_output.getvalue().strip()
 
