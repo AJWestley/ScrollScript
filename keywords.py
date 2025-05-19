@@ -19,6 +19,7 @@ IF = "foretell"
 ELIF = "shift"
 ELSE = "resolve"
 MAYBE = "mayhaps"
+FOR = "cycle"
 
 # ----- I/O -----
 PRINT = "reveal"

@@ -210,6 +210,47 @@ class ScrollScriptInterpreter:
         if left < 0 or right < 0 or left + right == 0:
             raise CarelessSpellError(f"'{left}' : '{right}' is an invalid incantation.")
         return left / (left + right)
+    
+    def for_range(self, tree):
+        var_name, var_type, start, stop, step = self.execute(tree.children[1])
+
+        self.variables[var_name] = {
+            "value": start,
+            "type": var_type,
+            "const": False,
+            "previous": None
+        }
+
+        block = tree.children[2]
+
+        while self.variables[var_name]['value'] <= stop:
+            self.execute(block)
+            self.variables[var_name]['previous'] = self.variables[var_name]['value']
+            self.variables[var_name]['value'] += step
+        
+        del self.variables[var_name]
+    
+    def range_expression(self, tree):
+        name = self.execute(tree.children[0])
+
+        start = self.execute(tree.children[1])
+        stop = self.execute(tree.children[2])
+        step = self.execute(tree.children[3]) if tree.children[3] is not None else 1
+
+        start = wrap_primitive(start)
+        stop = wrap_primitive(stop)
+        step = wrap_primitive(step)
+
+        if not is_number(start) or not is_number(stop) or not is_number(step):
+            raise CarelessSpellError(f"'{start.type_name}' -> '{stop.type_name}' | '{step.type_name}' is an invalid incantation.")
+
+        var_type = 'float' if isinstance(start, ScrollFloat) or isinstance(stop, ScrollFloat) or isinstance(step, ScrollFloat) else 'int'
+
+        if name in self.variables:
+            raise RuneAlreadyWrittenError(name)
+        
+        return name, var_type, start, stop, step
+
 
     def IF(self, token):
         return str(token.value)

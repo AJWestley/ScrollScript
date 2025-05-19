@@ -1,0 +1,13 @@
+cycle (i 1.2 -> 10.5 | 2.3 ) {
+    reveal $"i = {i}\n"
+}
+
+rune start = 1
+
+cycle (i start -> start * 5 ) {
+    cycle (j start -> 6 | 2) {
+        reveal $"Value: {i * j}\n"
+    }
+}
+
+sealed rune i = 2

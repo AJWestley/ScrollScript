@@ -1,0 +1,3 @@
+cycle (i 1 -> Truthsung) {
+    reveal i
+}

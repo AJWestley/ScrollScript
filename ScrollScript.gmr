@@ -32,6 +32,7 @@ IF.2: "foretell"
 ELIF.2: "shift"
 ELSE.2: "resolve"
 MAYBE.2: "mayhaps"
+FOR.2: "cycle"
 
 
 # ----- Top-Level Syntax -----
@@ -44,6 +45,7 @@ MAYBE.2: "mayhaps"
             | seal_statement
             | if_statement
             | maybe_statement
+            | for_loop
 
 
 # ----- Assignments & Declarations -----
@@ -69,6 +71,12 @@ maybe_statement: MAYBE ["(" ratio ")"] "{" block "}" [ELSE "{" block "}"]
 
 ratio: INTEGER ":" INTEGER
 
+for_loop: FOR "(" range_expression ")" "{" block "}"    -> for_range
+        #| FOR "(" each_in_expression ")" "{" block "}"    -> for_each
+
+range_expression: var_name expression "->" expression ["|" expression]
+
+#each_in_expression: var_name IN expression 
 
 # ----- Expressions -----
 
