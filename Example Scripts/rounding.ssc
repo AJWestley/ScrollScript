@@ -1,0 +1,9 @@
+sealed rune a = 1.6
+sealed rune b = 1.4
+
+reveal $"{~a}"
+reveal $"{/a}"
+reveal $"{^a}"
+reveal $"{~b}"
+reveal $"{/b}"
+reveal $"{^b}"

@@ -1,0 +1,22 @@
+rune i = 2
+
+reveal $"{i}\n"
+
+i++
+
+reveal $"{i}\n"
+
+i--
+
+reveal $"{i}\n"
+
+rune j = 4
+
+j -= i
+
+reveal $"{j}\n"
+
+i++
+i ^= j
+
+reveal $"{i}\n"

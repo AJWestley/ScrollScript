@@ -1,0 +1,51 @@
+rune birth_month = listen "What is your birth month? "
+
+rune success = Truthsung
+
+foretell (birth_month == "january") {
+    sealed rune colour = "Red"
+}
+shift (birth_month == "february") {
+    sealed rune colour = "Green"
+}
+shift (birth_month == "march") {
+    sealed rune colour = "Light Blue"
+}
+shift (birth_month == "april") {
+    sealed rune colour = "Orange"
+}
+shift (birth_month == "may") {
+    sealed rune colour = "Pink"
+}
+shift (birth_month == "june") {
+    sealed rune colour = "Dark Orange"
+}
+shift (birth_month == "july") {
+    sealed rune colour = "Dark Purple"
+}
+shift (birth_month == "august") {
+    sealed rune colour = "Grey"
+}
+shift (birth_month == "september") {
+    sealed rune colour = "Charcoal"
+}
+shift (birth_month == "october") {
+    sealed rune colour = "Sunshine Yellow"
+}
+shift (birth_month == "november") {
+    sealed rune colour = "Magenta"
+}
+shift (birth_month == "december") {
+    sealed rune colour = "Bluh"
+}
+resolve {
+    success = Falsehood
+    reveal $"The month '{birth_month}' was not understood. Please enter a month of the year in all lower case."
+}
+
+foretell (success) {
+    cycle (eye 1 -> measure colour) {
+        reveal $"{eye}: {birth_month}\n"
+    }
+    reveal $"Your colour is {colour}!\n"
+}

@@ -95,6 +95,12 @@ class ScrollInt(ScrollValue):
         if other_val == 0:
             raise ZeroDivisionError("The arcane winds forbid division by zero.")
         return ScrollFloat(self.value / wrap_primitive(other).value)
+    
+    def __floordiv__(self, other):
+        other_val = wrap_primitive(other).value
+        if other_val == 0:
+            raise ZeroDivisionError("The arcane winds forbid division by zero.")
+        return ScrollInt(self.value // wrap_primitive(other).value)
 
     def __mod__(self, other):
         return ScrollInt(self.value % wrap_primitive(other).value)
@@ -163,6 +169,12 @@ class ScrollFloat(ScrollValue):
         if other_val == 0:
             raise ZeroDivisionError("The arcane winds forbid division by zero.")
         return ScrollFloat(self.value / wrap_primitive(other).value)
+    
+    def __floordiv__(self, other):
+        other_val = wrap_primitive(other).value
+        if other_val == 0:
+            raise ZeroDivisionError("The arcane winds forbid division by zero.")
+        return ScrollInt(self.value // wrap_primitive(other).value)
 
     def __mod__(self, other):
         return ScrollFloat(self.value % wrap_primitive(other).value)

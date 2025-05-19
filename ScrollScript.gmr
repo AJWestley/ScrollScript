@@ -15,7 +15,7 @@ AS.2: "->"
 MAKE_CONST.2: "seal"
 
 PRINT.2: "reveal"
-INPUT.2: "channel"
+INPUT.2: "listen"
 
 prev: FROM DAYS OF YORE 
 FROM.2: "from"
@@ -32,7 +32,12 @@ IF.2: "foretell"
 ELIF.2: "shift"
 ELSE.2: "resolve"
 MAYBE.2: "mayhaps"
-FOR.2: "cycle"
+LOOP.2: "cycle"
+IN.2: "betwixt"
+AD.2: "ad"
+INFINITUM.2: "infinitum"
+BREAK.2: "shatter"
+CONTINUE.2: "persist"
 
 
 # ----- Top-Level Syntax -----
@@ -43,9 +48,11 @@ FOR.2: "cycle"
             | assignment
             | deletion
             | seal_statement
+            | increment_statement
             | if_statement
             | maybe_statement
-            | for_loop
+            | loop_statement
+            | loop_interrupt
 
 
 # ----- Assignments & Declarations -----
@@ -60,6 +67,9 @@ deletion: DELETE var_name
 
 seal_statement: MAKE_CONST var_name
 
+increment_statement: var_name INCR_OP                   -> simple_increment
+                | var_name CMP_INCR_OP expression       -> compound_increment
+
 
 # ----- Control Flow -----
 
@@ -71,12 +81,13 @@ maybe_statement: MAYBE ["(" ratio ")"] "{" block "}" [ELSE "{" block "}"]
 
 ratio: INTEGER ":" INTEGER
 
-for_loop: FOR "(" range_expression ")" "{" block "}"    -> for_range
-        #| FOR "(" each_in_expression ")" "{" block "}"    -> for_each
+loop_statement: LOOP "(" range_expression ")" "{" block "}"     -> for_range
+                | LOOP "(" AD INFINITUM ")" "{" block "}"            -> infinite_loop
 
 range_expression: var_name expression "->" expression ["|" expression]
 
-#each_in_expression: var_name IN expression 
+loop_interrupt: BREAK | CONTINUE
+
 
 # ----- Expressions -----
 
@@ -97,8 +108,9 @@ range_expression: var_name expression "->" expression ["|" expression]
 ?mul_expr: mul_expr MUL_OP unary_expr -> bin_expr_mul
                          | unary_expr
 
-?unary_expr: NOT unary_expr         -> un_expr_not
-                 | "-" unary_expr         -> un_expr_negate
+?unary_expr: NOT unary_expr             -> un_expr_not
+                 | "-" unary_expr       -> un_expr_negate
+                 | ROUND_OP unary_expr  -> un_expr_round
                  | power_expr
 
 ?power_expr: power_expr "^" primary_expr -> bin_expr_pow
@@ -130,10 +142,22 @@ DIGIT.2: "0".."9"
 
 # ----- Operators -----
 
-ADD_OP: "+" | "-" 
-MUL_OP: "*" | "/" | "%"
+ADD_OP: "+" | "-" | "/+" | "/-" | "^+" | "^-" | "~+" | "~-"
+
+MUL_OP: "*" | "/" | "/*" | "//" | "^*" | "^/" | "~*" | "~/" | "%" | "/%" | "^%" | "~%"
 
 COMP_OP: "<" | ">" | "<=" | ">=" | "==" | "!="
+
+INCR_OP: "++" | "--" 
+
+CMP_INCR_OP: "+=" | "/+=" | "^+=" | "~+=" 
+           | "-=" | "/-=" | "^-=" | "~-=" 
+           | "*=" | "/*=" | "^*=" | "~*=" 
+           | "/=" | "//=" | "^/=" | "~/="  
+           | "^=" | "/^=" | "^^=" | "~^="   
+           | "%=" | "/%=" | "^%=" | "~%="  
+
+ROUND_OP: "~" | "/" | "^"
 
 AND: "&&"
 OR: "||"

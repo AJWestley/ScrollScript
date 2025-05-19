@@ -1,4 +1,5 @@
 import random
+import math
 from lark import Token
 import keywords
 from utils import is_keyword, is_number
@@ -98,6 +99,68 @@ class ScrollScriptInterpreter:
         
         self.variables[name]['const'] = True
     
+    def simple_increment(self, tree):
+        name = self.execute(tree.children[0])
+
+        if name not in self.variables:
+            raise RuneNotWrittenError(name)
+        elif self.variables[name]['const']:
+            raise SealedRuneError(name)
+        
+        op = self.execute(tree.children[1])
+        
+        if not is_number(self.variables[name]['value']):
+            raise CarelessSpellError(f"'{self.variables[name]['type']}' {op} is an invalid incantation.")
+        
+        match op:
+            case "++": self.variables[name]['value'] += 1
+            case "--": self.variables[name]['value'] -= 1
+            case _: raise UnknownSpellError(op)
+    
+    def compound_increment(self, tree):
+        name = self.execute(tree.children[0])
+
+        if name not in self.variables:
+            raise RuneNotWrittenError(name)
+        elif self.variables[name]['const']:
+            raise SealedRuneError(name)
+        
+        op = self.execute(tree.children[1])
+        value = self.execute(tree.children[2])
+        
+        if not is_number(self.variables[name]['value']) or not is_number(value):
+            raise CarelessSpellError(f"'{self.variables[name]['type']}' {op} '{value.type_name}' is an invalid incantation.")
+        
+        match op:
+            case "+=": self.variables[name]['value'] += value
+            case "-=": self.variables[name]['value'] -= value
+            case "*=": self.variables[name]['value'] *= value
+            case "/=": self.variables[name]['value'] /= value
+            case "%=": self.variables[name]['value'] %= value
+            case "^=": self.variables[name]['value'] **= value
+            case "/+=": self.variables[name]['value'] = math.floor((self.variables[name]['value'] + value).value)
+            case "/-=": self.variables[name]['value'] = math.floor((self.variables[name]['value'] - value).value)
+            case "/*=": self.variables[name]['value'] = math.floor((self.variables[name]['value'] * value).value)
+            case "//=": self.variables[name]['value'] //= value
+            case "/^=": self.variables[name]['value'] = math.floor((self.variables[name]['value'] ** value).value)
+            case "/%=": self.variables[name]['value'] = math.floor((self.variables[name]['value'] % value).value)
+            case "^+=": self.variables[name]['value'] = math.ceil((self.variables[name]['value'] + value).value)
+            case "^-=": self.variables[name]['value'] = math.ceil((self.variables[name]['value'] - value).value)
+            case "^*=": self.variables[name]['value'] = math.ceil((self.variables[name]['value'] * value).value)
+            case "^/=": self.variables[name]['value'] = math.ceil((self.variables[name]['value'] / value).value)
+            case "^^=": self.variables[name]['value'] = math.ceil((self.variables[name]['value'] ** value).value)
+            case "~%=": self.variables[name]['value'] = math.ceil((self.variables[name]['value'] % value).value)
+            case "~+=": self.variables[name]['value'] = round((self.variables[name]['value'] + value).value)
+            case "~-=": self.variables[name]['value'] = round((self.variables[name]['value'] - value).value)
+            case "~*=": self.variables[name]['value'] = round((self.variables[name]['value'] * value).value)
+            case "~/=": self.variables[name]['value'] = round((self.variables[name]['value'] / value).value)
+            case "~^=": self.variables[name]['value'] = round((self.variables[name]['value'] ** value).value)
+            case "~%=": self.variables[name]['value'] = round((self.variables[name]['value'] % value).value)
+            case _: raise UnknownSpellError(op)
+        self.variables[name]['value'] = wrap_primitive(self.variables[name]['value'])
+        self.variables[name]['type'] = self.variables[name]['value'].type_name
+            
+    
     # ----- Expressions ------
     
     def bin_expr_add(self, tree):
@@ -107,27 +170,39 @@ class ScrollScriptInterpreter:
         if not (is_number(left) and is_number(right)):
             raise CarelessSpellError(f"'{left.type_name}' + '{right.type_name}' is an invalid incantation.")
         
-        if op == "+":
-            return left + right
-        if op == "-":
-            return left - right
-        
-        raise UnknownSpellError(op)
+        value = None
+        match op:
+            case "+": value = left + right
+            case "/+": value = math.floor((left + right).value)
+            case "^+": value = math.ceil((left + right).value)
+            case "~+": value = round((left + right).value)
+            case "-": value = left - right
+            case "/-": value = math.floor((left - right).value)
+            case "^-": value = math.ceil((left - right).value)
+            case "~-": value = round((left - right).value)
+            case _: raise UnknownSpellError(op)
+        return wrap_primitive(value)
     
     def bin_expr_mul(self, tree):
         left, op, right = list(map(self.execute, tree.children))
         left, right = wrap_primitive(left), wrap_primitive(right)
         
-        if op == "*":
-            return left * right
-        
-        if op == "/":
-            return left / right
-        
-        if op == "%":
-            return left % right
-        
-        raise UnknownSpellError(op)
+        value = None
+        match op:
+            case "*": value = left * right
+            case "/*": value = math.floor((left * right).value)
+            case "^*": value = math.ceil((left * right).value)
+            case "~*": value = round((left * right).value)
+            case "/": value = left / right
+            case "//": value = left // right
+            case "^/": value = math.ceil((left / right).value)
+            case "~/": value = round((left / right).value)
+            case "%": value = left % right
+            case "/%": value = math.floor((left % right).value)
+            case "^%": value = math.ceil((left % right).value)
+            case "~%": value = round((left % right).value)
+            case _: value = UnknownSpellError(op)
+        return wrap_primitive(value)
     
     def bin_expr_pow(self, tree):
         left, right = self.execute(tree.children[0]), self.execute(tree.children[1])
@@ -163,6 +238,16 @@ class ScrollScriptInterpreter:
     def un_expr_negate(self, tree):
         value = self.execute(tree.children[0])
         return -wrap_primitive(value)
+    
+    def un_expr_round(self, tree):
+        op = self.execute(tree.children[0])
+        value = self.execute(tree.children[1])
+        match op:
+            case "~": value = round(value.value)
+            case "/": value = math.floor(value.value)
+            case "^": value = math.ceil(value.value)
+            case _: raise UnknownSpellError(op)
+        return wrap_primitive(value)
     
     def un_expr_not(self, tree):
         value = self.execute(tree.children[1])
@@ -224,11 +309,27 @@ class ScrollScriptInterpreter:
         block = tree.children[2]
 
         while self.variables[var_name]['value'] <= stop:
-            self.execute(block)
+            try:
+                self.execute(block)
+            except ShatterError:
+                break
+            except PersistenceError:
+                pass
             self.variables[var_name]['previous'] = self.variables[var_name]['value']
             self.variables[var_name]['value'] += step
         
         del self.variables[var_name]
+    
+    def infinite_loop(self, tree):
+        block = tree.children[3]
+        while True:
+            try:
+                self.execute(block)
+            except ShatterError:
+                break
+            except PersistenceError:
+                pass
+            
     
     def range_expression(self, tree):
         name = self.execute(tree.children[0])
@@ -250,7 +351,15 @@ class ScrollScriptInterpreter:
             raise RuneAlreadyWrittenError(name)
         
         return name, var_type, start, stop, step
+    
+    def loop_interrupt(self, tree):
+        self.execute(tree.children[0])
+    
+    def BREAK(self, tree):
+        raise ShatterError()
 
+    def CONTINUE(self, tree):
+        raise PersistenceError()
 
     def IF(self, token):
         return str(token.value)
@@ -259,6 +368,12 @@ class ScrollScriptInterpreter:
         return str(token.value)
     
     def ELSE(self, token):
+        return str(token.value)
+    
+    def AD(self, token):
+        return str(token.value)
+    
+    def INFINITUM(self, token):
         return str(token.value)
     
     
@@ -324,6 +439,16 @@ class ScrollScriptInterpreter:
     
     def COMP_OP(self, token):
         return str(token.value)
+    
+    def INCR_OP(self, token):
+        return str(token.value)
+    
+    def CMP_INCR_OP(self, token):
+        return str(token.value)
+    
+    def ROUND_OP(self, token):
+        return str(token.value)
+    
     
     # ----- Input & Output ------
     

@@ -57,3 +57,17 @@ class MeasureError(SpellError):
     def __init__(self, message):
         super().__init__(message)
 
+
+# ----- Mana Flow Errors ----- #
+
+class ManaFlowError(ScrollError):
+    def __init__(self, message):
+        super().__init__(message)
+
+class PersistenceError(ManaFlowError):
+    def __init__(self):
+        super().__init__(f"Cannot persist when outside of a cycle.")
+
+class ShatterError(ManaFlowError):
+    def __init__(self):
+        super().__init__(f"No cycle to shatter was found.")
