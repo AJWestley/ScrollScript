@@ -149,15 +149,6 @@ DIGIT.2: "0".."9"
 ?number: INTEGER | FLOAT
 
 
-# ----- Collections -----
-
-collection: array, dictionary
-
-array: ARRAY "<" (expression ",")* ">"
-
-dictionary: DICT "<" (expression "->" expression ",")* ">"
-
-
 # ----- Operators -----
 
 ADD_OP: "+" | "-" | "/+" | "/-" | "^+" | "^-" | "~+" | "~-"
