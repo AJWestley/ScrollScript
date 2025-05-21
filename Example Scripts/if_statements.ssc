@@ -1,43 +1,43 @@
 foretell (Falsehood) {
-    reveal "Hello\n"
+    reveal "Hello\n";
 }
 
-rune ryan = 21
-rune june = 14
-rune Mike = 30
+rune ryan = 21;
+rune june = 14;
+rune Mike = 30;
 
 foretell (ryan >= 18) {
-    reveal "Ryan can drink.\n"
+    reveal "Ryan can drink.\n";
 }
 resolve {
-    reveal "Ryan cannot drink.\n"
+    reveal "Ryan cannot drink.\n";
 }
 
 foretell (Mike == 69) {
-    reveal "Nice.\n"
+    reveal "Nice.\n";
 }
 
 foretell (june > 20) {
-    reveal "ADULT\n"
+    reveal "ADULT\n";
 }
 shift (june < 20 && june > 12) {
-    reveal "TEENAGER\n"
+    reveal "TEENAGER\n";
 }
 resolve {
-    reveal "CHILD\n"
+    reveal "CHILD\n";
 }
 
-rune havingFun = Truthsung
+rune havingFun = Truthsung;
 
 foretell (havingFun == Truthsung) {
-    reveal "Woo Hoo!\n"
+    reveal "Woo Hoo!\n";
 }
 
-rune name = "Danny"
+rune name = "Danny";
 
 foretell (!(name == "Danny")) {
-    reveal "No Dannny Boy\n"
+    reveal "No Dannny Boy\n";
 }
 resolve {
-    reveal "Oh Dannny Boy\n"
+    reveal "Oh Dannny Boy\n";
 }

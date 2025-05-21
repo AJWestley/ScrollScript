@@ -1,22 +1,22 @@
-rune i = 2
+rune i = 2;
 
-reveal $"{i}\n"
+reveal $"{i}\n";
 
-i++
+i++;
 
-reveal $"{i}\n"
+reveal $"{i}\n";
 
-i--
+i--;
 
-reveal $"{i}\n"
+reveal $"{i}\n";
 
-rune j = 4
+rune j = 4;
 
-j -= i
+j -= i;
 
-reveal $"{j}\n"
+reveal $"{j}\n";
 
-i++
-i ^= j
+i++;
+i ^= j;
 
-reveal $"{i}\n"
+reveal $"{i}\n";

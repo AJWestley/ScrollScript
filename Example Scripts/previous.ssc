@@ -1,7 +1,7 @@
-rune mynum = 4
+rune mynum = 4;
 
-mynum = 10
+mynum = 10;
 
-reveal $"{mynum}\n"
+reveal $"{mynum}\n";
 
-reveal $"{mynum from days of yore}\n"
+reveal $"{mynum from days of yore}\n";

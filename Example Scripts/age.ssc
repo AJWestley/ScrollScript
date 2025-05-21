@@ -1,7 +1,7 @@
-rune name = "AJ"
-rune age = (transmute "23" -> int)
-rune current_year = (transmute "2025" -> int)
+rune name = "AJ";
+rune age = (transmute "23" -> int);
+rune current_year = (transmute "2025" -> int);
 
-sealed rune year_born = current_year - age
+sealed rune year_born = current_year - age;
 
-reveal $"{name}, you were born in {year_born}.\n"
+reveal $"{name}, you were born in {year_born}.\n";

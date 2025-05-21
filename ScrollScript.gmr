@@ -14,6 +14,9 @@ CAST.2: "transmute"
 AS.2: "->"
 MAKE_CONST.2: "seal"
 
+ARRAY.2: "tome"
+DICT.2: "grimoire"
+
 PRINT.2: "reveal"
 INPUT.2: "listen"
 
@@ -33,7 +36,7 @@ ELIF.2: "shift"
 ELSE.2: "resolve"
 MAYBE.2: "mayhaps"
 LOOP.2: "cycle"
-UNTIL.2: "fireball"
+UNTIL.2: "lest"
 IN.2: "betwixt"
 AD.2: "ad"
 INFINITUM.2: "infinitum"
@@ -43,17 +46,17 @@ CONTINUE.2: "persist"
 
 # ----- Top-Level Syntax -----
 
-?instruction: print_statement
-            | var_declaration
-            | const_declaration
-            | assignment
-            | deletion
-            | seal_statement
-            | increment_statement
+?instruction: print_statement ";"
+            | var_declaration ";"
+            | const_declaration ";"
+            | assignment ";"
+            | deletion ";"
+            | seal_statement ";"
+            | increment_statement ";"
             | if_statement
             | maybe_statement
             | loop_statement
-            | loop_interrupt
+            | loop_interrupt ";"
 
 
 # ----- Assignments & Declarations -----
@@ -129,6 +132,7 @@ loop_interrupt: BREAK | CONTINUE
                    | number
                    | "(" expression ")"            -> group_expr
                    | index_expr
+                   | collection
 
 length_expr: LENGTH expression
 
@@ -143,6 +147,15 @@ STRING.2: "\"" /[^\"]*/ "\""
 BOOLEAN.2: TRUE | FALSE
 DIGIT.2: "0".."9"
 ?number: INTEGER | FLOAT
+
+
+# ----- Collections -----
+
+collection: array, dictionary
+
+array: ARRAY "<" (expression ",")* ">"
+
+dictionary: DICT "<" (expression "->" expression ",")* ">"
 
 
 # ----- Operators -----

@@ -1,7 +1,7 @@
-rune goose = 10
-rune decr = 0.1
+rune goose = 10;
+rune decr = 0.1;
 
-cycle (fireball goose == 2) {
-    reveal $"{goose}\n"
-    goose /-= decr
+cycle (lest goose == 2) {
+    reveal $"{goose}\n";
+    goose /-= decr;
 }

@@ -1,8 +1,8 @@
-rune i = 0
+rune i = 0;
 cycle (ad infinitum) {
-    i = i + 1
-    reveal "Hello\n"
+    i = i + 1;
+    reveal "Hello\n";
     foretell (i >= 20) {
-        shatter
+        shatter;
     }
 }

@@ -1,16 +1,16 @@
-rune a
+rune a;
 
-a = 2.5
+a = 2.5;
 
-rune b = a - 4
+rune b = a - 4;
 
-a = 1 + 3 * 4
+a = 1 + 3 * 4;
 
-rune c = 2.5 % 3
+rune c = 2.5 % 3;
 
-rune d = -c
+rune d = -c;
 
-reveal $"a = {a}\n"
-reveal $"b = {b}\n"
-reveal $"c = {c}\n"
-reveal $"d = {d}\n"
+reveal $"a = {a}\n";
+reveal $"b = {b}\n";
+reveal $"c = {c}\n";
+reveal $"d = {d}\n";

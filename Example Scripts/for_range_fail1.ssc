@@ -1,5 +1,5 @@
-rune i = 10
+rune i = 10;
 
 cycle (i 1 -> 5) {
-    reveal i
+    reveal i;
 }

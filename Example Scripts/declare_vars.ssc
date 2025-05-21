@@ -1,7 +1,7 @@
-rune a = 10
+rune a = 10;
 
-reveal $"{a}\n"
+reveal $"{a}\n";
 
-a = 2
+a = 2;
 
-reveal $"{a}\n"
+reveal $"{a}\n";

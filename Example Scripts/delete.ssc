@@ -1,7 +1,7 @@
-rune a = 4
+rune a = 4;
 
-a = 2
+a = 2;
 
-dispel a
+dispel a;
 
-reveal a
+reveal a;

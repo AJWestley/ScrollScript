@@ -1,11 +1,11 @@
-rune a = "hello"
+rune a = "hello";
 
-a = "bye"
+a = "bye";
 
-reveal a
+reveal a;
 
-seal a
+seal a;
 
-a = "hi"
+a = "hi";
 
-reveal a
+reveal a;

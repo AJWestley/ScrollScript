@@ -1,7 +1,7 @@
-rune name = "letter by letter"
+rune name = "letter by letter";
 
 cycle (char betwixt name) {
     foretell (char != " ") {
-        reveal $"{char}\n"
+        reveal $"{char}\n";
     }
 }

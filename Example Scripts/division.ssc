@@ -1,7 +1,7 @@
-rune a = 5
+rune a = 5;
 
-reveal $"{a/3}\n"
-reveal $"{a//3}\n"
-reveal $"{a^/3}\n"
-reveal $"{a~/3}\n"
-reveal $"{10~/3}\n"
+reveal $"{a/3}\n";
+reveal $"{a//3}\n";
+reveal $"{a^/3}\n";
+reveal $"{a~/3}\n";
+reveal $"{10~/3}\n";

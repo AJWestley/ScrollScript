@@ -1,15 +1,15 @@
 mayhaps {
-    reveal "This ran!\n"
+    reveal "This ran!\n";
 }
 
 mayhaps (8:2) {
-    reveal "60% chance\n"
+    reveal "60% chance\n";
 }
 
 mayhaps (0:1) {
-    reveal "This shouldn't run\n"
+    reveal "This shouldn't run\n";
 }
 
 mayhaps (1:0) {
-    reveal "This should always run\n"
+    reveal "This should always run\n";
 }
