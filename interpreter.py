@@ -9,12 +9,19 @@ from exceptions import *
 class ScrollScriptInterpreter:
     def __init__(self):
         self.variables = {}
+        self.functions = {}
     
     
     def start(self, tree):
+        self.load_functions(tree)
         for instruction in tree.children:
-            # print(instruction.pretty())
-            self.execute(instruction)
+            if instruction.data != "func_declaration":
+                self.execute(instruction)
+    
+    def load_functions(self, tree):
+        for instruction in tree.children:
+            if instruction.data == "func_declaration":
+                self.execute(instruction)
     
     
     # ----- Assignments & Declarations ------
@@ -160,6 +167,79 @@ class ScrollScriptInterpreter:
         self.variables[name]['value'] = wrap_primitive(self.variables[name]['value'])
         self.variables[name]['type'] = self.variables[name]['value'].type_name
             
+    
+    # ----- Functions ------
+
+    def func_declaration(self, tree):
+        name = self.execute(tree.children[1])
+        params_tree = tree.children[2] if len(tree.children) > 2 else None
+        block = tree.children[-1]
+
+        params = []
+        if params_tree:
+            for param_node in params_tree.children:
+                params.append(self.execute(param_node))
+
+        if name in self.functions:
+            raise RuneAlreadyWrittenError(f"Function '{name}' already declared.")
+
+        self.functions[name] = {
+            "params": params,
+            "block": block
+        }
+    
+    def func_call(self, tree):
+        name = self.execute(tree.children[1])
+        args_tree = tree.children[2] if len(tree.children) > 2 else None
+
+        if name not in self.functions:
+            raise UnknownSpellError(f"Function '{name}' not found.")
+
+        func_info = self.functions[name]
+        params = func_info["params"]
+        block = func_info["block"]
+
+        args = []
+        if args_tree:
+            for arg_node in args_tree.children:
+                args.append(self.execute(arg_node))
+
+        if len(args) != len(params):
+            raise CarelessSpellError(f"Function '{name}' expected {len(params)} arguments but got {len(args)}.")
+
+        original_variables = self.variables
+        self.variables = self.variables.copy()
+
+        for i, param_name in enumerate(params):
+            self.variables[param_name] = {
+                "value": wrap_primitive(args[i]),
+                "type": type(wrap_primitive(args[i])).type_name,
+                "const": False,
+                "previous": None
+            }
+
+        return_value = None # Initialize return_value
+        try:
+            self.execute(block)
+        except ReturnValue as e:
+            return_value = e.value # Store the value from the exception
+        finally:
+            self.variables = original_variables # Always restore variables
+
+        return return_value
+
+    def return_statement(self, tree):
+        value = None
+        if len(tree.children) > 1: # Check if an expression is present
+            value = self.execute(tree.children[1])
+        raise ReturnValue(value)
+
+    def FUNC_CALL(self, token):
+        return str(token.value)
+
+    def RETURN(self, token):
+        return str(token.value)
+
     
     # ----- Expressions ------
     

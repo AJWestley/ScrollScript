@@ -1,0 +1,8 @@
+incantation double ~a {
+    ~o 2 * a;
+}
+
+rune a = 5;
+rune double_a = cast double ~:a:~;
+
+reveal $"a = {a}\nDouble a = {double_a}\n";

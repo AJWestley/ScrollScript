@@ -1,0 +1,11 @@
+incantation fib ~n {
+    foretell (n <= 0) {
+        ~o 0;
+    }
+    foretell (n == 1) {
+        ~o 1;
+    }
+    ~o cast fib ~:n-1:~ + cast fib ~:n-2:~;
+}
+
+reveal cast fib ~:10:~;

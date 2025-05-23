@@ -43,6 +43,10 @@ INFINITUM.2: "infinitum"
 BREAK.2: "shatter"
 CONTINUE.2: "persist"
 
+FUNC_DEF.2: "incantation"
+FUNC_CALL.2: "cast"
+RETURN.2: "~o"
+
 
 # ----- Top-Level Syntax -----
 
@@ -53,10 +57,13 @@ CONTINUE.2: "persist"
             | deletion ";"
             | seal_statement ";"
             | increment_statement ";"
+            | loop_interrupt ";"
+            | return_statement ";"
+            | func_call ";"
+            | func_declaration
             | if_statement
             | maybe_statement
             | loop_statement
-            | loop_interrupt ";"
 
 
 # ----- Assignments & Declarations -----
@@ -73,6 +80,19 @@ seal_statement: MAKE_CONST var_name
 
 increment_statement: var_name INCR_OP                   -> simple_increment
                 | var_name CMP_INCR_OP expression       -> compound_increment
+
+
+# ----- Functions -----
+
+func_declaration: FUNC_DEF var_name  [func_params] "{" block "}"
+
+func_params: ("~" var_name)+
+
+func_call: FUNC_CALL var_name "~:" [func_args] ":~"
+
+func_args: expression ("," expression)*
+
+return_statement: RETURN [expression]
 
 
 # ----- Control Flow -----
@@ -123,20 +143,30 @@ loop_interrupt: BREAK | CONTINUE
                 | primary_expr
 
 ?primary_expr: value_cast
-                   | input_statement
-                   | length_expr
-                   | BOOLEAN
-                   | interpolated_string
-                   | STRING
-                   | var_expr
-                   | number
-                   | "(" expression ")"            -> group_expr
-                   | index_expr
-                   | collection
+                | func_call
+                | input_statement
+                | length_expr
+                | BOOLEAN
+                | interpolated_string
+                | STRING
+                | var_expr
+                | number
+                | "(" expression ")"            -> group_expr
+                | index_expr
+                | collection
 
 length_expr: LENGTH expression
 
 index_expr: var_name "::" expression
+
+
+# ----- Collections -----
+
+collection: array
+
+array: ARRAY "[" [array_contents] "]"
+
+array_contents: expression ("," expression)*
 
 
 # ----- Data Types -----

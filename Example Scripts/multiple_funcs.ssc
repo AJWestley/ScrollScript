@@ -1,0 +1,9 @@
+incantation power_print ~a ~b {
+    reveal $"{cast pow ~:a, b:~}\n";
+}
+
+cast power_print ~:3, 2:~;
+
+incantation pow ~a ~b {
+    ~o a ^b;
+}

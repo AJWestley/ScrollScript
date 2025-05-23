@@ -71,3 +71,9 @@ class PersistenceError(ManaFlowError):
 class ShatterError(ManaFlowError):
     def __init__(self):
         super().__init__(f"No cycle to shatter was found.")
+
+
+# ----- Return Errors ----- #
+class ReturnValue(Exception):
+    def __init__(self, value=None):
+        self.value = value
