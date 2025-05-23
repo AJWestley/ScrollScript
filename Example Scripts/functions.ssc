@@ -1,5 +1,5 @@
 incantation double ~a {
-    ~o 2 * a;
+    proclaim 2 * a;
 }
 
 rune a = 5;

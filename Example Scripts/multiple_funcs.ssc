@@ -5,5 +5,5 @@ incantation power_print ~a ~b {
 cast power_print ~:3, 2:~;
 
 incantation pow ~a ~b {
-    ~o a ^b;
+    proclaim a ^b;
 }

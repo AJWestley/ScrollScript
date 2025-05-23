@@ -45,7 +45,7 @@ CONTINUE.2: "persist"
 
 FUNC_DEF.2: "incantation"
 FUNC_CALL.2: "cast"
-RETURN.2: "~o"
+RETURN.2: "proclaim"
 
 
 # ----- Top-Level Syntax -----
