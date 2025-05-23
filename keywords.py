@@ -20,10 +20,21 @@ ELIF = "shift"
 ELSE = "resolve"
 MAYBE = "mayhaps"
 FOR = "cycle"
+UNTIL = "lest"
+AD = "AD"
+INFINITUM = "infinitum"
+IN = "betwixt"
+BREAK = "shatter"
+CONTINUE = "persist"
+
+# ----- Functions -----
+FUNC_DEF = "incantation"
+FUNC_CALL = "cast"
+RETURN = "proclaim"
 
 # ----- I/O -----
 PRINT = "reveal"
-INPUT = "channel"
+INPUT = "listen"
 
 # ----- Booleans -----
 TRUE = "Truthsung"
@@ -33,11 +44,15 @@ FALSE = "Falsehood"
 DELETE = "dispel"
 LENGTH = "measure"
 
+# ----- Collections -----
+ARRAY = "tome"
+DICT = "grimoire"
+
 # ----- Unique Features -----
 FROM = "from"
 DAYS = "days"
 OF = "of"
-YORE = "of"
+YORE = "yore"
 
 # ----- Full List -----
 KEYWORDS_LIST = {
